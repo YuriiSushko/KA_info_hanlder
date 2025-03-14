@@ -1,10 +1,14 @@
 from data_tracker.settings.base import *
 
 DEBUG = False
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'katext.com','katext.onrender.com'] 
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'katext.com', 'katext.onrender.com']
 
-# Configure static files for production (for example, using AWS S3)
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# # Configure static files for production (for example, using AWS S3)
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# In production.py
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.NullStorage'
+
 
 # Security settings for production
 CSRF_COOKIE_SECURE = True
