@@ -1,0 +1,10 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="title">Course Title</label>
+    <input type="text" name="title" id="title" value="{{ course.title }}" required>
+
+    <label for="description">Course Description</label>
+    <textarea name="description" id="description" required>{{ course.description }}</textarea>
+
+    <button type="submit">Update Course</button>
+</form>
