@@ -1,5 +1,4 @@
 from django.contrib import admin
-from data_tracker.courses.models import Course, Item, ActionLog
 
 # Customizing the admin interface for Course model
 class CourseAdmin(admin.ModelAdmin):
@@ -12,7 +11,14 @@ class ActionLogAdmin(admin.ModelAdmin):
     list_filter = ('action', 'object_type')  # Filter by action type and object type
     search_fields = ('object_type', 'people__name')  # Search by object type or people’s name
 
+# Import models inside the register function to avoid circular imports
+def get_models():
+    from data_tracker.courses.models import Course, Item, ActionLog
+    return Course, Item, ActionLog
+
 # Register models with custom admin options
+Course, Item, ActionLog = get_models()
+
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Item)
-admin.site.register(ActionLog)
+admin.site.register(ActionLog, ActionLogAdmin)

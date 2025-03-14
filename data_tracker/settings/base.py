@@ -17,10 +17,8 @@ import os
 env = environ.Env()
 environ.Env.read_env(os.path.join(os.path.dirname(__file__), '.env'))
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -37,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'courses',
+    'data_tracker.courses',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +75,7 @@ WSGI_APPLICATION = 'data_tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': env('DB_NAME', 'katext'),  # Use environment variable for DB name, with default 'katext'
+        'NAME': env('DB_NAME',  default='Text'),  # Use environment variable for DB name, with default 'katext'
         'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB
         'CLIENT': {
             'host': env('DB_HOST'),  # Use environment variable for MongoDB connection string
