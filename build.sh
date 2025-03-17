@@ -9,7 +9,7 @@ python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', 
 mkdir -p /opt/render/project/src/staticfiles
 
 # Convert static asset files
-# python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
 # Apply any outstanding database migrations
 python manage.py migrate
