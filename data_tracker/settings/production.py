@@ -12,6 +12,8 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+COLLECTSTATIC_EXCLUDE = ['node_modules', 'media', '*.mp4', '*.zip', '*.tar']
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',

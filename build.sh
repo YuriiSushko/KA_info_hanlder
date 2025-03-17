@@ -17,7 +17,7 @@ echo "✅ Created staticfiles directory"
 
 # Run collectstatic and check for errors
 echo "Running collectstatic..."
-python manage.py collectstatic --noinput || { echo "❌ collectstatic failed"; exit 1; }
+python manage.py collectstatic --noinput --ignore=node_modules --ignore=*.mp4 --ignore=*.zip || { echo "❌ collectstatic failed"; exit 1; }
 echo "✅ Collected static files"
 
 # Apply database migrations
