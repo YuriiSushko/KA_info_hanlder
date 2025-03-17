@@ -2,13 +2,17 @@ from data_tracker.settings.base import *
 
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 print(BASE_DIR)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': env('DB_NAME',  default='Text'),  # Use environment variable for DB name, with default 'katext'
+        'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB
+        'CLIENT': {
+            'host': env('DB_HOST'),  # Use environment variable for MongoDB connection string
+        }
     }
 }
 
