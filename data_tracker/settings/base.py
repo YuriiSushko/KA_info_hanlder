@@ -72,20 +72,6 @@ WSGI_APPLICATION = 'data_tracker.wsgi.application'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': env('DB_NAME',  default='Text'),  # Use environment variable for DB name, with default 'katext'
-        'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB
-        'CLIENT': {
-            'host': env('DB_HOST'),  # Use environment variable for MongoDB connection string
-        }
-    }
-}
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
