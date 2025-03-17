@@ -8,8 +8,8 @@ echo "🚀 Build script started"
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# Debug: Print Base Directory
-python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
+# # Debug: Print Base Directory
+# python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
 
 # Debug: Create staticfiles directory explicitly
 mkdir -p /opt/render/project/src/staticfiles
