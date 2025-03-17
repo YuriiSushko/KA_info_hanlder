@@ -5,6 +5,13 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handl
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 print(BASE_DIR)
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 # # Configure static files for production (for example, using AWS S3)
 # STATIC_ROOT = BASE_DIR / 'staticfiles'
 
