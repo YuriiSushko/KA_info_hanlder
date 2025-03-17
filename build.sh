@@ -6,7 +6,7 @@ set -o errexit
 pip install -r requirements.txt
 python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
 
-mkdir -p /opt/render/project/src/data_tracker/staticfiles/
+mkdir -p /opt/render/project/src/staticfiles
 
 # Convert static asset files
 # python manage.py collectstatic --noinput
