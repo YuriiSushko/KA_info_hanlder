@@ -2,21 +2,22 @@
 # Exit on error
 set -o errexit
 
-# Install dependencies
+# Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# Print Base Directory (for debugging)
+# Debug: Print Base Directory
 python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
 
-# Manually create the staticfiles directory (Render might not create it automatically)
+# Debug: Create staticfiles directory explicitly
 mkdir -p /opt/render/project/src/staticfiles
-echo "Created staticfiles directory"
+echo "✅ Created staticfiles directory"
 
-# Collect static files
-python manage.py collectstatic --noinput
-echo "Collected static files"
+# Run collectstatic and check for errors
+echo "Running collectstatic..."
+python manage.py collectstatic --noinput || { echo "❌ collectstatic failed"; exit 1; }
+echo "✅ Collected static files"
 
-# Apply migrations
-python manage.py migrate
-echo "Applied migrations"
+# Apply database migrations
+python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
+echo "✅ Migrations applied"
