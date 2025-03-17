@@ -1,7 +1,7 @@
 import os
 
 # Get the settings module from the environment variable
-settings_module = os.getenv('DJANGO_SETTINGS_MODULE', 'data_tracker.settings.development')
+settings_module = os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.getenv('DJANGO_SETTINGS_MODULE', 'data_tracker.settings.production'))
 
 try:
     if settings_module == 'data_tracker.settings.development':
