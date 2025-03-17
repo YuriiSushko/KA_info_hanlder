@@ -8,7 +8,7 @@ pip install -r requirements.txt
 mkdir -p /opt/render/project/src/staticfiles
 
 # Convert static asset files
-python manage.py collectstatic --noinput
+# python manage.py collectstatic --noinput
 
 # Apply any outstanding database migrations
 python manage.py migrate
