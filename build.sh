@@ -5,7 +5,7 @@ set -o errexit
 # Modify this line as needed for your package manager (pip, poetry, etc.)
 pip install -r requirements.txt
 
-mkdir -p staticfiles
+mkdir -p data_tracker/staticfiles
 
 # Convert static asset files
 python manage.py collectstatic --noinput

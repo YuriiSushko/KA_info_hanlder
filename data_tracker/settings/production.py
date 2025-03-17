@@ -2,6 +2,7 @@ from data_tracker.settings.base import *
 
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # # Configure static files for production (for example, using AWS S3)
 # STATIC_ROOT = BASE_DIR / 'staticfiles'
