@@ -13,6 +13,7 @@ STATIC_URL = '/static/'
 
 # Where to store the collected static files (for production)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Template settings for production (since you're only using templates in the 'courses' app)
 TEMPLATES = [
