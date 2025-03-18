@@ -16,8 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+# Add a view for the root URL
+def home(request):
+    return HttpResponse("Welcome to the Home Page! Add admin/ to url to go to the admin panel")  # Replace with a template or other content
+
+# Define a view for the favicon.ico request
+def favicon(request):
+    return HttpResponse(status=204)  # Return empty response for favicon
 
 urlpatterns = [
-    path('', admin.site.urls),
+    path('favicon.ico', favicon),  # Handle favicon.ico requests
+    path('', home),  # Root URL points to the custom home view
+    path('admin/', admin.site.urls),  # Admin URL remains the same
     path('courses/', include('data_tracker.courses.urls')),  # Include the courses app URLs
 ]
+
