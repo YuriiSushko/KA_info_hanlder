@@ -2,17 +2,15 @@ from data_tracker.settings.base import *
 
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-COLLECTSTATIC_EXCLUDE = ['node_modules', 'media', '*.mp4', '*.zip', '*.tar']
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 DATABASES = {
     'default': {
