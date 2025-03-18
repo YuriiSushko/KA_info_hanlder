@@ -26,7 +26,8 @@ pip install -r requirements.txt
 # python manage.py collectstatic --noinput --verbosity 2 || { echo "❌ collectstatic failed"; exit 1; }
 # echo "✅ Collected static files"
 
-# Apply database migrations
-echo "🚀 Applying migratrions"
-python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
-echo "✅ Migrations applied"
+# # Apply database migrations
+# echo "🚀 Applying migratrions"
+# python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
+# echo "✅ Migrations applied"
+echo "✅ Finished"
