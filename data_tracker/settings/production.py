@@ -9,6 +9,23 @@ DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Template settings for production (since you're only using templates in the 'courses' app)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',  # The template backend to use
+        'DIRS': [],  # No global templates folder
+        'APP_DIRS': True,  # Enable app-level templates searching
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
@@ -20,15 +37,7 @@ DATABASES = {
     }
 }
 
-# # Configure static files for production (for example, using AWS S3)
-
 # Security settings for production
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP requests to HTTPS
-
-# # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
-# Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
-# and renames the files with unique names for each version to support long-term caching
-
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
