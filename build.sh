@@ -19,7 +19,7 @@ echo "✅ Granted permissions to staticfiles directory"
 
 # Debug: Check for existing static files
 echo "Contents of static directory:"
-ls /opt/render/project/src/data_tracker/static/
+ls /opt/render/project/src/data_tracker/staticfiles/
 
 # Run collectstatic and check for errors
 echo "Running collectstatic..."
