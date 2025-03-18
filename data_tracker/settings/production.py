@@ -6,7 +6,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 DEBUG = False
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
+ALLOWED_HOSTS = ['ka-info-hanlder.onrender.com']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Template settings for production (since you're only using templates in the 'courses' app)
