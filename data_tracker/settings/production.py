@@ -24,20 +24,15 @@ DATABASES = {
 }
 
 # # Configure static files for production (for example, using AWS S3)
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Security settings for production
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP requests to HTTPS
 
-# STATIC_URL = '/static/'
-
 # # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
 # and renames the files with unique names for each version to support long-term caching
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,3 +44,5 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
