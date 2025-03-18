@@ -27,5 +27,6 @@ pip install -r requirements.txt
 # echo "✅ Collected static files"
 
 # Apply database migrations
+echo "🚀 Applying migratrions"
 python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
 echo "✅ Migrations applied"
