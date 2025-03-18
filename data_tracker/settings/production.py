@@ -1,4 +1,9 @@
 from data_tracker.settings.base import *
+import environ
+
+# Read the .env file for environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ka-info-handler.com', 'ka-info-handler.onrender.com']
