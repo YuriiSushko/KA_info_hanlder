@@ -14,8 +14,8 @@ echo "✅ Created staticfiles directory"
 chmod -R 777 /opt/render/project/src/data_tracker/staticfiles/
 echo "✅ Granted permissions to staticfiles directory"
 
-source .venv/bin/activate
-echo "Using venv"
+# source .venv/bin/activate
+# echo "Using venv"
 
 # Debug: Check for existing static files
 echo "Contents of static directory:"
