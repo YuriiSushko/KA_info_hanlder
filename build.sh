@@ -3,17 +3,22 @@
 set -o errexit
 
 echo "🚀 Build script started"
+source .venv/bin/activate
+echo "Using venv"
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# # Debug: Print Base Directory
-# python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
+mkdir -p /opt/render/project/src/data_tracker/staticfiles/
+echo "✅ Created staticfiles directory"
 
-# Debug: Create staticfiles directory explicitly
-# mkdir /opt/render/project/src/data_tracker/staticfiles/
-# echo "✅ Created staticfiles directory"
+chmod -R 777 /opt/render/project/src/data_tracker/staticfiles/
+echo "✅ Granted permissions to staticfiles directory"
+
+# Debug: Check for existing static files
+echo "Contents of static directory:"
+ls /opt/render/project/src/data_tracker/static/
 
 # Run collectstatic and check for errors
 echo "Running collectstatic..."
