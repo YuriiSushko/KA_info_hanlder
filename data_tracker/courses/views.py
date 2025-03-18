@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from data_tracker.courses.models import Course
+from data_tracker.courses.models import Course, People, Role
 
 # View to create a new course
 def create_course(request):
@@ -39,3 +39,11 @@ def delete_course(request, course_id):
         return redirect('course_list')  # Redirect to a list view of courses (or wherever you need)
 
     return render(request, 'courses/delete_course.html', {'course': course})  # Render the delete confirmation form
+
+def people_list(request):
+    people = People.objects.all()
+    return render(request, 'people_list.html', {'people': people})
+
+def role_list(request):
+    roles = Role.objects.all()
+    return render(request, 'role_list.html', {'roles': roles})

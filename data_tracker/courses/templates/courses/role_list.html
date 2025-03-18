@@ -1,0 +1,15 @@
+<h1>Roles</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Role Title</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for role in roles %}
+        <tr>
+            <td>{{ role.title }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
