@@ -12,8 +12,8 @@ pip install -r requirements.txt
 # python manage.py shell -c "from django.conf import settings; print('BASE_DIR:', settings.BASE_DIR)"
 
 # Debug: Create staticfiles directory explicitly
-mkdir /opt/render/project/src/data_tracker/staticfiles/
-echo "✅ Created staticfiles directory"
+# mkdir /opt/render/project/src/data_tracker/staticfiles/
+# echo "✅ Created staticfiles directory"
 
 # Run collectstatic and check for errors
 echo "Running collectstatic..."
