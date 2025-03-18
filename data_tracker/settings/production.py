@@ -9,6 +9,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['ka-info-hanlder.onrender.com']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STATIC_URL = '/static/'
+
+# Where to store the collected static files (for production)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Template settings for production (since you're only using templates in the 'courses' app)
 TEMPLATES = [
     {
@@ -36,6 +41,8 @@ DATABASES = {
         }
     }
 }
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Security settings for production
 CSRF_COOKIE_SECURE = True

@@ -30,4 +30,7 @@ pip install -r requirements.txt
 # echo "🚀 Applying migratrions"
 # python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
 # echo "✅ Migrations applied"
+echo "Running collectstatic..."
+python manage.py collectstatic --noinput --verbosity 2 
+
 echo "✅ Finished"
