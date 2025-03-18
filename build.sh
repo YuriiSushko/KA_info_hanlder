@@ -3,8 +3,6 @@
 set -o errexit
 
 echo "🚀 Build script started"
-source .venv/bin/activate
-echo "Using venv"
 
 # Upgrade pip and install dependencies
 pip install --upgrade pip
@@ -15,6 +13,9 @@ echo "✅ Created staticfiles directory"
 
 chmod -R 777 /opt/render/project/src/data_tracker/staticfiles/
 echo "✅ Granted permissions to staticfiles directory"
+
+source .venv/bin/activate
+echo "Using venv"
 
 # Debug: Check for existing static files
 echo "Contents of static directory:"
