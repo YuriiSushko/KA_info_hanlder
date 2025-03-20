@@ -1,7 +1,8 @@
 from django.apps import AppConfig
 
 class CoursesConfig(AppConfig):
-    name = 'courses'
+    name = 'data_tracker.courses'  # The name of your app
 
     def ready(self):
-        import courses.signals  # Import the signals to register them
+        import data_tracker.courses.signals  # Register the signals
+        print("Signals have been registered!")

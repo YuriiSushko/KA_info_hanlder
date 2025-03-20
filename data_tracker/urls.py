@@ -30,6 +30,5 @@ urlpatterns = [
     path('favicon.ico', favicon),  # Handle favicon.ico requests
     path('', home),  # Root URL points to the custom home view
     path('admin/', admin.site.urls),  # Admin URL remains the same
-    path('courses/', include('data_tracker.courses.urls')),  # Include the courses app URLs
 ]
 

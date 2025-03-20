@@ -28,15 +28,15 @@ SECRET_KEY = env('SECRET_KEY')
 
 # Application definition
 
-
 INSTALLED_APPS = [
+    'data_tracker.users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'data_tracker.courses',
+    'data_tracker.courses.apps.CoursesConfig',
 ]
 
 MIDDLEWARE = [
@@ -88,13 +88,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.Mortals'
+
+AUTH_GROUP_MODEL = 'users.Roles'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 

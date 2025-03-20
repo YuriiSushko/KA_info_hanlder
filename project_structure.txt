@@ -24,13 +24,24 @@
 │   │   ├── signals.py
 │   │   ├── templates
 │   │   │   └── courses
+│   │   │       ├── action_log_list.html
+│   │   │       ├── base.html
 │   │   │       ├── create_course.html
 │   │   │       ├── delete_course.html
-│   │   │       └── update_course.html
+│   │   │       ├── people_list.html
+│   │   │       ├── role_list.html
+│   │   │       ├── update_course.html
+│   │   │       └── update_item.html
 │   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── __init__.py
+│   ├── mortals
+│   │   ├── __init__.py
+│   │   ├── models.py
+│   │   └── __pycache__
+│   │       ├── __init__.cpython-310.pyc
+│   │       └── models.cpython-310.pyc
 │   ├── __pycache__
 │   │   ├── asgi.cpython-310.pyc
 │   │   ├── __init__.cpython-310.pyc
@@ -48,7 +59,8 @@
 │   │       ├── development.cpython-310.pyc
 │   │       ├── development.cpython-312.pyc
 │   │       ├── __init__.cpython-310.pyc
-│   │       └── __init__.cpython-312.pyc
+│   │       ├── __init__.cpython-312.pyc
+│   │       └── production.cpython-310.pyc
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
@@ -57,4 +69,4 @@
 ├── requirements.txt
 └── runtime.txt
 
-11 directories, 47 files
+13 directories, 57 files
