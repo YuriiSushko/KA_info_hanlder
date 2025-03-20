@@ -16,7 +16,7 @@ from django.utils.html import format_html
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'status', 'get_auditor', 'get_translator', 'last_modified')
     list_filter = ('type', 'status')
-    search_fields = ('title')
+    search_fields = ['title']
 
     def save_model(self, request, obj, form, change):
         """
@@ -49,7 +49,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 class ActionLogAdmin(admin.ModelAdmin):
     list_display = ('action', 'type', 'item', 'who', 'get_local_time', 'new_status', 'comment')
-    search_fields = ('item_title')
+    search_fields = ['item_title', 'type', 'comment']
     list_filter = ('action', 'type', 'new_status')
 
     def get_item_link(self, obj):
@@ -75,7 +75,7 @@ class ActionLogAdmin(admin.ModelAdmin):
 # Status Admin
 class StatusAdmin(admin.ModelAdmin):
     list_display = ('title', 'comments')  # Display title and comments
-    search_fields = ('title',)  # Enable search by title
+    search_fields = ['title']  # Enable search by title
     list_filter = ('title',)  # Add filter for title
 
 # # Role Admin
@@ -87,7 +87,7 @@ class StatusAdmin(admin.ModelAdmin):
 # Course Admin
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'created_at')  # Display title, description, and created_at
-    search_fields = ('title', 'description')  # Enable search by title and description
+    search_fields = ['title', 'description']  # Enable search by title and description
     list_filter = ('created_at',)  # Add filter for created_at date
 
 # Register models in the admin site
