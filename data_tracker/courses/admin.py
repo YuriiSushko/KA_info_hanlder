@@ -26,25 +26,39 @@ class ItemAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def get_auditor(self, obj):
-        # Fetch the 'Auditor' role
-        auditor_role = Roles.objects.get(title="Auditor")  # Assuming you have a role called 'Auditor'
-        
-        # Find the user (Mortals) who has this role
-        auditor = Mortals.objects.filter(groups=auditor_role).first()  # Gets the first auditor user
-        
-        return f"{auditor.first_name} {auditor.last_name}" if auditor else ''
+        """
+        Fetch the specific 'Auditor' for the item.
+        This will return only the user assigned as the auditor for the given item.
+        """
+        if obj.auditor:
+            return f"{obj.auditor.first_name} {obj.auditor.last_name}"
+        return "None"  # Return a default value if no auditor is assigned
     get_auditor.short_description = 'Auditor'
 
     def get_translator(self, obj):
-        # Fetch the 'Translator' role
-        translator_role = Roles.objects.get(title="Translator")  # Assuming you have a role called 'Translator'
-        
-        # Find the user (Mortals) who has this role
-        translator = Mortals.objects.filter(groups=translator_role).first()  # Gets the first translator user
-        
-        return f"{translator.first_name} {translator.last_name}" if translator else ''
+        """
+        Fetch the specific 'Translator' for the item.
+        This will return only the user assigned as the translator for the given item.
+        """
+        if obj.translator:
+            return f"{obj.translator.first_name} {obj.translator.last_name}"
+        return "None"  # Return a default value if no translator is assigned
     get_translator.short_description = 'Translator'
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        This method is used to filter the available options in the foreign key field
+        to only show users with the "Auditor" or "Translator" role when selecting an Auditor or Translator.
+        """
+        if db_field.name == "auditor":
+            # Show all users with the "Auditor" role in the dropdown
+            auditor_role = Roles.objects.get(title="Auditor")
+            kwargs["queryset"] = Mortals.objects.filter(groups=auditor_role)
+        elif db_field.name == "translator":
+            # Show all users with the "Translator" role in the dropdown
+            translator_role = Roles.objects.get(title="Translator")
+            kwargs["queryset"] = Mortals.objects.filter(groups=translator_role)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class ActionLogAdmin(admin.ModelAdmin):

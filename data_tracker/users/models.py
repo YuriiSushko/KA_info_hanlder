@@ -69,4 +69,4 @@ class Roles(Group):
         verbose_name_plural = "Roles"
 
     def __str__(self):
-        return self.name
+        return self.title
