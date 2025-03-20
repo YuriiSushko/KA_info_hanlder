@@ -49,7 +49,7 @@ class Item(models.Model):
         EXERCISE = 'exercise', 'Exercise'
 
     title = models.CharField(max_length=200)
-    link = models.URLField()  # Store a URL as a link
+    link = models.URLField(unique=True)  # Store a URL as a link
     external_link = models.URLField(null=True, blank=True)  # Link to the item on the site
     courses = models.ManyToManyField(Course, related_name='items')  # Many-to-many relationship with Course
     type = models.CharField(max_length=10, choices=ItemType.choices)
