@@ -7,8 +7,8 @@ class Status(models.Model):
     comments = models.TextField()
     
     class Meta:
-        verbose_name = "Role"
-        verbose_name_plural = "Roles"
+        verbose_name = "Status"
+        verbose_name_plural = "Statuses"
 
     def __str__(self):
         return self.title
