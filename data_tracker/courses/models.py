@@ -81,5 +81,5 @@ class ActionLog(models.Model):
     comment = models.TextField()
 
     def __str__(self):
-        return f"{self.action} {self.type} by {self.who.username} at {self.date}"
+        return f"{self.action} {self.type} by {self.who.first_name} {self.who.last_name} at {self.date}"
     

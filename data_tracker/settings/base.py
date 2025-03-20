@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'data_tracker.courses.apps.CoursesConfig',
+    'data_tracker',
 ]
 
 MIDDLEWARE = [

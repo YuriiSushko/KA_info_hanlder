@@ -21,7 +21,7 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
         
-    if len(sys.argv) > 1 and sys.argv[1] == 'makemigrations' or sys.argv[1] == 'migrate' or  sys.argv[1] == 'createsuperuser':
+    if len(sys.argv) > 1 and sys.argv[1] in ['makemigrations', 'migrate', 'createsuperuser', 'import_items', 'help']:
         execute_from_command_line(sys.argv)
     else:
         port = os.environ.get('PORT', '8000')  # Use '8000' as default if PORT is not set
