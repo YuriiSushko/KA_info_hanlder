@@ -4,8 +4,6 @@ set -o errexit
 
 echo "🚀 Build script started"
 
-export DISABLE_COLLECTSTATIC=1
-
 # Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -33,13 +31,9 @@ pip install -r requirements.txt
 # python manage.py migrate || { echo "❌ Migrations failed"; exit 1; }
 # echo "✅ Migrations applied"
 # Skip collectstatic if DISABLE_COLLECTSTATIC is set
-if [ "$DISABLE_COLLECTSTATIC" != "1" ]; then
-  echo "Running collectstatic..."
-  python manage.py collectstatic --noinput
-  echo "✅ Collected static files"
-else
-  echo "Skipping collectstatic due to DISABLE_COLLECTSTATIC=1"
-fi
 
+echo "Running collectstatic..."
+python manage.py collectstatic --noinput
+echo "✅ Collected static files"
 
 echo "✅ Finished"
