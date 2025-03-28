@@ -5,8 +5,8 @@ from django.utils.html import format_html
 from django.contrib.admin import SimpleListFilter
 
 class CourseFilter(SimpleListFilter):
-    title = ('Course')  # The filter title
-    parameter_name = 'course'  # The parameter name used in the URL
+    title = ('Course')
+    parameter_name = 'course'
 
     def lookups(self, request, model_admin):
         """
@@ -21,13 +21,17 @@ class CourseFilter(SimpleListFilter):
         Filters the queryset based on the selected course.
         """
         if self.value():
-            return queryset.filter(courses__id=self.value())  # Filter items by course ID
+            return queryset.filter(courses__id=self.value())
         return queryset
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'get_auditor', 'get_translator', 'last_modified')
     list_filter = ('type', 'status', CourseFilter)
     search_fields = ['title']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('status', 'auditor', 'translator', 'updated_by').prefetch_related('courses')
 
     def save_model(self, request, obj, form, change):
         """
@@ -72,7 +76,7 @@ class ItemAdmin(admin.ModelAdmin):
     
     def get_link_ka(self, obj):
         if obj.external_link:
-             return format_html('<a href="{}">{}</a>', obj.external_link, "KA Link")
+            return format_html('<a href="{}">{}</a>', obj.external_link, "KA Link")
     get_link_ka.short_description = 'Khan Academy'
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
