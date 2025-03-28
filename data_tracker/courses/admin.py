@@ -25,7 +25,7 @@ class CourseFilter(SimpleListFilter):
         return queryset
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'get_auditor', 'get_translator', 'last_modified')
+    list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
     list_filter = ('type', 'status', CourseFilter)
     search_fields = ['title']
 
@@ -40,25 +40,25 @@ class ItemAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-    def get_auditor(self, obj):
-        """
-        Fetch the specific 'Auditor' for the item.
-        This will return only the user assigned as the auditor for the given item.
-        """
-        if obj.auditor:
-            return f"{obj.auditor.first_name} {obj.auditor.last_name}"
-        return "None"
-    get_auditor.short_description = 'Auditor'
+    # def get_auditor(self, obj):
+    #     """
+    #     Fetch the specific 'Auditor' for the item.
+    #     This will return only the user assigned as the auditor for the given item.
+    #     """
+    #     if obj.auditor:
+    #         return f"{obj.auditor.first_name} {obj.auditor.last_name}"
+    #     return "None"
+    # get_auditor.short_description = 'Auditor'
 
-    def get_translator(self, obj):
-        """
-        Fetch the specific 'Translator' for the item.
-        This will return only the user assigned as the translator for the given item.
-        """
-        if obj.translator:
-            return f"{obj.translator.first_name} {obj.translator.last_name}"
-        return "None"
-    get_translator.short_description = 'Translator'
+    # def get_translator(self, obj):
+    #     """
+    #     Fetch the specific 'Translator' for the item.
+    #     This will return only the user assigned as the translator for the given item.
+    #     """
+    #     if obj.translator:
+    #         return f"{obj.translator.first_name} {obj.translator.last_name}"
+    #     return "None"
+    # get_translator.short_description = 'Translator'
     
     def get_courses(self, obj):
         """
