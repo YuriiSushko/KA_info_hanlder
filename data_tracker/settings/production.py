@@ -5,7 +5,7 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['ka-info-hanlder.onrender.com']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
