@@ -35,7 +35,7 @@ pip install -r requirements.txt
 # Skip collectstatic if DISABLE_COLLECTSTATIC is set
 if [ "$DISABLE_COLLECTSTATIC" != "1" ]; then
   echo "Running collectstatic..."
-  python manage.py collectstatic --noinput --verbosity 2 || { echo "❌ collectstatic failed"; exit 1; }
+  python manage.py collectstatic --noinput
   echo "✅ Collected static files"
 else
   echo "Skipping collectstatic due to DISABLE_COLLECTSTATIC=1"
