@@ -1,9 +1,26 @@
 from django.contrib import admin
 from data_tracker.users.models import Mortals, Roles
 from django.contrib.auth.models import Group
+from data_tracker.users.forms import MortalsCreationForm
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-class MortalsAdmin(admin.ModelAdmin):
+class MortalsAdmin(BaseUserAdmin):
+    add_form = MortalsCreationForm
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'is_staff', 'is_active')}
+        ),
+    )
     list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'get_roles')
+    ordering = ('email',)
+    search_fields = ('email', 'first_name', 'last_name')
+    filter_horizontal = ('groups', 'user_permissions',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+    )
 
     def get_roles(self, obj):
         return ", ".join([group.name for group in obj.groups.all()])

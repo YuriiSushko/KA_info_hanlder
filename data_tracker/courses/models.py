@@ -54,11 +54,11 @@ class Item(models.Model):
     courses = models.ManyToManyField(Course, related_name='items')  # Many-to-many relationship with Course
     type = models.CharField(max_length=10, choices=ItemType.choices)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True)  # Foreign key to Status
-    auditor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='audited_items')
-    translator = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='translated_items')
+    auditor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='audited_items',blank=True)
+    translator = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='translated_items',blank=True)
     number_of_words = models.IntegerField()  # Store number of words
     updated_by = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)
-    comments = models.TextField()  # Store any comments
+    comments = models.TextField(blank=True)  # Store any comments
     last_modified = models.DateTimeField(auto_now=True)  # Timestamp for last modification
 
     def __str__(self):
