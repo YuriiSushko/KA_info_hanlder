@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from data_tracker.admin_site import custom_admin_site
 
 # Add a view for the root URL
 def home(request):
@@ -28,7 +29,8 @@ def favicon(request):
 
 urlpatterns = [
     path('favicon.ico', favicon),  # Handle favicon.ico requests
-    path('', home),  # Root URL points to the custom home view
-    path('admin/', admin.site.urls),  # Admin URL remains the same
+    path('', home),  # Root URL points to the custom home view'
+    # path('admin/', admin.site.urls),
+    path('admin/', custom_admin_site.urls),  # Admin URL remains the same
 ]
 
