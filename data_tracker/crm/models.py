@@ -89,7 +89,7 @@ class Event(models.Model):
         return f"{self.get_event_type_display()} on {self.event_date}"
 
 class EventParticipant(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Взаємодія")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Учасник")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name="Учасник")
     object_id = models.PositiveIntegerField()
     participant = GenericForeignKey('content_type', 'object_id')

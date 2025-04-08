@@ -3,6 +3,7 @@ from django.contrib import admin
 from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.admin import SimpleListFilter
+from django import forms
 
 class SotialRoleAdmin(admin.ModelAdmin):
     list_display = ('title', 'description')
@@ -48,6 +49,7 @@ class EventParticipantInline(GenericTabularInline):
     extra = 1
 
 class EventAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['conductor']
     list_display = ('event_type', 'conductor', 'event_date', 'location', 'created_at')
     list_filter = ('event_type', 'conductor',)
     search_fields = ['event_type__title', 'location', 'notes']

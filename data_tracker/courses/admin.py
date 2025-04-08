@@ -71,12 +71,12 @@ class ItemAdmin(admin.ModelAdmin):
     
     def get_link(self, obj):
         if obj.link:
-            return format_html('<a href="{}">{}</a>', obj.link, "TP Link")
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.link, "TP Link")
     get_link.short_description = 'Translation portal'
-    
+
     def get_link_ka(self, obj):
         if obj.external_link:
-            return format_html('<a href="{}">{}</a>', obj.external_link, "KA Link")
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.external_link, "KA Link")
     get_link_ka.short_description = 'Khan Academy'
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
