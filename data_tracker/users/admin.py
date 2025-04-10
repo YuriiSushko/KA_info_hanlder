@@ -5,6 +5,7 @@ from data_tracker.users.forms import MortalsCreationForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 class MortalsAdmin(BaseUserAdmin):
+    readonly_fields = ('last_seen',)
     add_form = MortalsCreationForm
     add_fieldsets = (
         (None, {
@@ -12,7 +13,7 @@ class MortalsAdmin(BaseUserAdmin):
             'fields': ('email', 'first_name', 'last_name', 'password1', 'password2', 'is_staff', 'is_active')}
         ),
     )
-    list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'get_roles')
+    list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'get_roles','last_seen')
     ordering = ('email',)
     search_fields = ('email', 'first_name', 'last_name')
     filter_horizontal = ('groups', 'user_permissions',)

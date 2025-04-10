@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .online-users-panel {
+      position: fixed;
+      top: 50px; /* Adjust as needed to avoid overlapping with header/navigation */
+      right: 0;
+      width: 200px;  /* Or the percentage width you prefer */
+      padding: 10px;
+      background: #fff;
+      border-left: 1px solid #ccc;
+      z-index: 1000; /* Ensure it's above other elements */
+    }
+    /* Optional: if you need to adjust the main content so it doesn't clash with the panel */
+    #content-main {
+      margin-right: 220px; /* Add extra space on the right */
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    {{ block.super }}
+  </div>
+  <div class="online-users-panel">
+    <h2>Online Users</h2>
+    {% if online_users %}
+      <ul>
+        {% for user in online_users %}
+          <li>{{ user.username }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No online users.</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -28,6 +28,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
     list_filter = ('type', 'status', CourseFilter)
     search_fields = ['title']
+    readonly_fields = ('last_modified','updated_by','title','type','courses','number_of_words')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -123,6 +124,7 @@ class StatusAdmin(admin.ModelAdmin):
     list_filter = ('title',)
 
 class CourseAdmin(admin.ModelAdmin):
+    readonly_fields = ('created_at',)
     list_display = ('title', 'description', 'created_at')
     search_fields = ['title']
     list_filter = ('created_at',)
