@@ -86,7 +86,7 @@ class Event(models.Model):
         verbose_name_plural = "Взаємодії"
     
     def __str__(self):
-        return f"{self.get_event_type_display()} on {self.event_date}"
+        return f"{self.event_type} on {self.event_date}"
 
 class EventParticipant(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Учасник")

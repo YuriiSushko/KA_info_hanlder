@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'data_tracker.courses.apps.CoursesConfig',
+    'dal',
+    'dal_select2',
+    'dal_queryset_sequence',
+    'dal_select2_queryset_sequence',
     'data_tracker.crm',
     'data_tracker',
 ]

@@ -17,3 +17,6 @@ sqlparse==0.2.4
 typing_extensions==4.12.2
 uvicorn==0.34.0
 whitenoise==6.9.0
+django-autocomplete-light==3.8.0
+django-querysetsequence==0.16
+django-phonenumber-field==6.0.0  

@@ -1,9 +1,8 @@
 from data_tracker.admin_site import custom_admin_site
 from django.contrib import admin
 from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant
-from django.contrib.contenttypes.admin import GenericTabularInline
+from data_tracker.crm.forms import EventParticipantForm
 from django.contrib.admin import SimpleListFilter
-from django import forms
 
 class SotialRoleAdmin(admin.ModelAdmin):
     list_display = ('title', 'description')
@@ -44,9 +43,11 @@ class UserAdmin(admin.ModelAdmin):
     institutions_list.short_description = "Організації"
 
 
-class EventParticipantInline(GenericTabularInline):
+class EventParticipantInline(admin.TabularInline):
     model = EventParticipant
+    form = EventParticipantForm
     extra = 1
+    exclude = ('content_type','object_id')
 
 class EventAdmin(admin.ModelAdmin):
     autocomplete_fields = ['conductor']
