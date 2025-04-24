@@ -1,7 +1,7 @@
 from django.db import models
 from data_tracker.users.models import Mortals
 from django.core.validators import RegexValidator
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 class SotialRole(models.Model):
@@ -44,6 +44,7 @@ class Institution(models.Model):
     email = models.EmailField(null=True, blank=True, verbose_name="Пошта")
     people = models.ManyToManyField("User", related_name="institutions", blank=True, verbose_name="Персони")
     role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
+    contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
     
     class Meta:
         verbose_name = "Організація"
@@ -61,6 +62,7 @@ class User(models.Model):
     # institution = models.ForeignKey(Institution, null=True, blank=True, verbose_name="Організація")
     sotial_role = models.ForeignKey(SotialRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Соціальна роль")
     ka_role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
+    contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
     
     class Meta:
         verbose_name = "Персона"
@@ -89,7 +91,7 @@ class Event(models.Model):
         return f"{self.event_type} on {self.event_date}"
 
 class EventParticipant(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name="Учасник")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE,related_name='participant', verbose_name="Учасник")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name="Учасник")
     object_id = models.PositiveIntegerField()
     participant = GenericForeignKey('content_type', 'object_id')
@@ -97,3 +99,16 @@ class EventParticipant(models.Model):
     class Meta:
         verbose_name = "Учасник"
         verbose_name_plural = "Учасники"
+
+class ContactInfoInline(models.Model):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    value = models.CharField(max_length=225, blank=True, null=True, verbose_name="Додаткова контактна інформація")
+
+    class Meta:
+        verbose_name = "Додаткова контактна інформація"
+        verbose_name_plural = "Додаткова контактна інформація"
+    
+    def __str__(self):
+        return self.value
