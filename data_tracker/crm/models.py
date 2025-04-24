@@ -41,7 +41,7 @@ class Institution(models.Model):
     name = models.CharField(max_length=225, verbose_name="Ім'я організації")
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True, null=True, verbose_name="Основний номер телефону")
-    phone_number = GenericRelation("PhoneNumber", related_query_name='phone_number_mul')
+    phone_numbers = GenericRelation("PhoneNumber", related_query_name='phone_number_mul')
     email = models.EmailField(null=True, blank=True, verbose_name="Пошта")
     people = models.ManyToManyField("User", related_name="institutions", blank=True, verbose_name="Персони")
     role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
