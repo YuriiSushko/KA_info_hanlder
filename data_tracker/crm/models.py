@@ -46,7 +46,7 @@ class Institution(models.Model):
     people = models.ManyToManyField("User", related_name="institutions", blank=True, verbose_name="Персони")
     role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
-    primary_source = models.CharField(max_length=225, verbose_name="Першоджерело")
+    primary_source = models.CharField(max_length=225, verbose_name="Першоджерело", blank=True, null=True,)
     full_addr  = models.TextField(blank=True, null=True, verbose_name="Адреса")
     
     class Meta:
@@ -67,7 +67,7 @@ class User(models.Model):
     sotial_role = models.ForeignKey(SotialRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Соціальна роль")
     ka_role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
-    primary_source = models.CharField(max_length=225, verbose_name="Першоджерело")
+    primary_source = models.CharField(max_length=225, verbose_name="Першоджерело", blank=True, null=True,)
     full_addr  = models.TextField(blank=True, null=True, verbose_name="Адреса")
     
     class Meta:
