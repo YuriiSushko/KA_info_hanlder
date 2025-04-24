@@ -47,6 +47,7 @@ class Institution(models.Model):
     role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
     primary_source = models.CharField(max_length=225, verbose_name="Першоджерело")
+    full_addr  = models.TextField(blank=True, null=True, verbose_name="Адреса")
     
     class Meta:
         verbose_name = "Організація"
@@ -67,6 +68,7 @@ class User(models.Model):
     ka_role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
     primary_source = models.CharField(max_length=225, verbose_name="Першоджерело")
+    full_addr  = models.TextField(blank=True, null=True, verbose_name="Адреса")
     
     class Meta:
         verbose_name = "Персона"
