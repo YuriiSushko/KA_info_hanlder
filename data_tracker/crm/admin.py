@@ -1,6 +1,6 @@
 from data_tracker.admin_site import custom_admin_site
 from django.contrib import admin
-from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant, ContactInfoInline
+from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant, ContactInfoInline, PhoneNumber
 from data_tracker.crm.forms import EventParticipantForm
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.admin import GenericTabularInline
@@ -21,10 +21,14 @@ class ContactInfoInlineAdmin(GenericTabularInline):
     model = ContactInfoInline
     extra = 1
     
+class PhoneNumberInline(GenericTabularInline):
+    model = PhoneNumber
+    extra = 1
+    
 class InstitutionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone_number', 'email', 'role', 'add_info')
+    list_display = ('name', 'phone_number_filter', 'email', 'role', 'add_info')
     search_fields = ['name', 'email']
-    inlines = [ContactInfoInlineAdmin]
+    inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     
     def add_info(self, obj):
         qs    = obj.contact_info.all()
@@ -35,7 +39,23 @@ class InstitutionAdmin(admin.ModelAdmin):
         if total > 3:
             result += ", …"
         return result
-    add_info.short_description = "Додаткова інформація"
+    add_info.short_description = "Додатковий контакт"
+    
+    def phone_number_filter(self, obj):
+        numbers = []
+        if obj.phone_number:
+            numbers.append(obj.phone_number)
+        
+        extras_qs = obj.phone_numbers.all()
+        numbers.extend(pn.phone_number for pn in extras_qs if pn.phone_number)
+
+        total = len(numbers)
+        shown = numbers[:2]
+        text  = ", ".join(shown)
+        if total > 2:
+            text += ", …"
+        return text
+    phone_number_filter.short_description = "Номер телефону"
     
 class InstitutionListFilter(SimpleListFilter):
     title = 'Організації'
@@ -51,10 +71,10 @@ class InstitutionListFilter(SimpleListFilter):
         return queryset
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'surname', 'phone_number', 'email', 'institutions_list', 'sotial_role', 'ka_role', 'add_info')
+    list_display = ('name', 'surname','phone_number_filter','email', 'institutions_list', 'sotial_role', 'ka_role', 'add_info')
     list_filter = (InstitutionListFilter,)
     search_fields = ['name', 'surname', 'email', 'institutions__name']
-    inlines = [ContactInfoInlineAdmin]
+    inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     
     def institutions_list(self, obj):
         return ", ".join([institution.name for institution in obj.institutions.all()])
@@ -69,7 +89,23 @@ class UserAdmin(admin.ModelAdmin):
         if total > 3:
             result += ", …"
         return result
-    add_info.short_description = "Додаткова інформація"
+    add_info.short_description = "Додатковий контакт"
+    
+    def phone_number_filter(self, obj):
+        numbers = []
+        if obj.phone_number:
+            numbers.append(obj.phone_number)
+        
+        extras_qs = obj.phone_numbers.all()
+        numbers.extend(pn.phone_number for pn in extras_qs if pn.phone_number)
+
+        total = len(numbers)
+        shown = numbers[:2]
+        text  = ", ".join(shown)
+        if total > 2:
+            text += ", …"
+        return text
+    phone_number_filter.short_description = "Номер телефону"
 
 
 class EventParticipantInline(admin.TabularInline):
