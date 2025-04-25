@@ -91,6 +91,10 @@ class ItemAdmin(admin.ModelAdmin):
         elif db_field.name == "translator":
             translator_role = Roles.objects.get(title="Translator")
             kwargs["queryset"] = Mortals.objects.filter(groups=translator_role)
+        elif db_field.name == 'status':
+            all_statuses = list(Status.objects.all())
+            pks = [s.pk for s in all_statuses if not s.video_related_status]
+            kwargs['queryset'] = Status.objects.filter(pk__in=pks)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -179,6 +183,10 @@ class VideoAdmin(admin.ModelAdmin):
         elif db_field.name == "actor":
             actor_role = Roles.objects.get(title="Actor")
             kwargs["queryset"] = Mortals.objects.filter(groups=actor_role)
+        elif db_field.name == 'video_status' or db_field.name == 'platform_status' or db_field.name == 'youtube_status':
+            all_statuses = list(Status.objects.all())
+            pks = [s.pk for s in all_statuses if s.video_related_status]
+            kwargs['queryset'] = Status.objects.filter(pk__in=pks)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
     def get_courses(self, obj):
