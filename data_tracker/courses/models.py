@@ -4,6 +4,7 @@ from data_tracker.users.models import Mortals, Roles
 # Status model to define the status for items
 class Status(models.Model):
     title = models.CharField(max_length=100)
+    video_related_status = models.BooleanField(default=False)
     comments = models.TextField()
     
     class Meta:
@@ -64,6 +65,27 @@ class Item(models.Model):
     def __str__(self):
         return self.title
 
+class Video(models.Model):
+    title = models.CharField(max_length=200)
+    portal_link = models.URLField(unique=True)
+    yt_link = models.URLField(null=True, blank=True)
+    translated_yt_link = models.URLField(null=True, blank=True)
+    courses = models.ManyToManyField(Course, related_name='videos')
+    video_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='video_status')
+    platform_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='platform_status')
+    youtube_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='youtube_status')
+    translation_issue = models.BooleanField(default=False)
+    auditor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='audited_videos',blank=True)
+    actor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='translated_videos',blank=True)
+    duration = models.DurationField()
+    updated_by = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)
+    comments = models.TextField(blank=True)
+    type = models.CharField(max_length=10,blank=True, null=True, default="Video")
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
 
 # ActionLog model to track changes (create, update, delete) for items and courses
 class ActionLog(models.Model):
@@ -74,11 +96,12 @@ class ActionLog(models.Model):
 
     action = models.CharField(choices=ACTION_CHOICES, max_length=10)
     type = models.CharField(max_length=50)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True, blank=True)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, null=True, blank=True)
     who = models.ForeignKey(Mortals, on_delete=models.CASCADE, null=True, blank=True)  # Track who performed the action
     new_status = models.ForeignKey('Status', on_delete=models.SET_NULL, null=True, blank=True)  # Adjust based on your model
     date = models.DateTimeField(auto_now_add=True)
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.action} {self.type} by {self.who.first_name} {self.who.last_name} at {self.date}"

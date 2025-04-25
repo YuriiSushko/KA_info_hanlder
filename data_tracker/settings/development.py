@@ -9,7 +9,7 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'katext.com']  # Add any o
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': env('DB_NAME',  default='Text'),  # Use environment variable for DB name, with default 'katext'
+        'NAME': env('DB_NAME_DEV',  default='DEVELOPMENT'),  # Use environment variable for DB name, with default 'katext'
         'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB
         'CLIENT': {
             'host': env('DB_HOST'),  # Use environment variable for MongoDB connection string
