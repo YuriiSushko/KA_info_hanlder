@@ -97,9 +97,9 @@ class ActionLog(models.Model):
 
     action = models.CharField(choices=ACTION_CHOICES, max_length=10)
     type = models.CharField(max_length=50)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True, blank=True)
-    video = models.ForeignKey(Video, on_delete=models.CASCADE, null=True, blank=True)
-    who = models.ForeignKey(Mortals, on_delete=models.CASCADE, null=True, blank=True)  # Track who performed the action
+    item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True)
+    video = models.ForeignKey(Video, on_delete=models.SET_NULL, null=True, blank=True)
+    who = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)  # Track who performed the action
     new_status = models.ForeignKey('Status', on_delete=models.SET_NULL, null=True, blank=True)  # Adjust based on your model
     date = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(blank=True)

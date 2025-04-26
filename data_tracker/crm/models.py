@@ -78,8 +78,8 @@ class User(models.Model):
         return f"{self.name} {self.surname}"
 
 class Event(models.Model):
-    event_type = models.ForeignKey(EventType, on_delete=models.CASCADE, verbose_name="Тип взаємодії")
-    conductor = models.ForeignKey(Mortals, on_delete=models.CASCADE, verbose_name="Хто проводить")
+    event_type = models.ForeignKey(EventType, on_delete=models.SET_NULL, verbose_name="Тип взаємодії", null=True)
+    conductor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, verbose_name="Хто проводить", null=True)
     
     event_date = models.DateTimeField(blank=True, null=True, verbose_name="Дата")
     
@@ -97,8 +97,8 @@ class Event(models.Model):
         return f"{self.event_type} on {self.event_date}"
 
 class EventParticipant(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE,related_name='participant', verbose_name="Учасник")
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name="Учасник")
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL,related_name='participant', verbose_name="Учасник", null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, verbose_name="Учасник", null=True)
     object_id = models.PositiveIntegerField()
     participant = GenericForeignKey('content_type', 'object_id')
     
@@ -107,7 +107,7 @@ class EventParticipant(models.Model):
         verbose_name_plural = "Учасники"
 
 class ContactInfoInline(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     value = models.CharField(max_length=225, blank=True, null=True, verbose_name="Додаткова контактна інформація")
@@ -120,7 +120,7 @@ class ContactInfoInline(models.Model):
         return self.value
     
 class PhoneNumber(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
