@@ -3,6 +3,7 @@ from data_tracker.courses.models import Course, Status, Item, ActionLog, Video
 from data_tracker.users.models import Mortals, Roles
 from django.utils.html import format_html
 from django.contrib.admin import SimpleListFilter
+from django.utils.translation import gettext_lazy as _
 
 class CourseFilter(SimpleListFilter):
     title = ('Course')
@@ -143,17 +144,37 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'created_at')
     search_fields = ['title']
     list_filter = ('created_at',)
-    
+
+class VideoStatusFilter(admin.SimpleListFilter):
+    title = ('Video Status')
+    parameter_name = 'video_status'
+
+    def lookups(self, request, model_admin):
+        all_statuses = list(Status.objects.all())
+        choices = [
+            (s.pk, s.title) 
+            for s in all_statuses 
+            if s.video_related_status
+        ]
+        return choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(video_status__pk=self.value())
+        return queryset
+
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_courses', 'video_status', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status', 'youtube_status', 'translation_issue', 'last_modified')
+    list_display = ('title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
-    list_filter = ('video_status', 'platform_status', 'youtube_status', 'translation_issue', CourseFilter)
+    list_filter = (VideoStatusFilter, 'translation_issue', CourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related('video_status', 'platform_status', 'youtube_status', 'auditor', 'actor', 'updated_by').prefetch_related('courses')
+        qs = qs.select_related('video_status')
+        qs = qs.prefetch_related('platform_status', 'youtube_status', 'courses')
+        return qs
 
     def save_model(self, request, obj, form, change):
         """
@@ -161,6 +182,21 @@ class VideoAdmin(admin.ModelAdmin):
         """
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+        
+    def video_status_display(self, obj):
+        return obj.video_status.title if obj.video_status else '-'
+    video_status_display.short_description = 'Video Status'
+    video_status_display.admin_order_field = 'video_status__title'
+
+    def platform_status_display(self, obj):
+        return obj.platform_status.title if obj.platform_status else '-'
+    platform_status_display.short_description = 'Platform Status'
+    platform_status_display.admin_order_field = 'platform_status__title'
+
+    def youtube_status_display(self, obj):
+        return obj.youtube_status.title if obj.youtube_status else '-'
+    youtube_status_display.short_description = 'YouTube Status'
+    youtube_status_display.admin_order_field = 'youtube_status__title'
 
     def get_link(self, obj):
         if obj.portal_link:
