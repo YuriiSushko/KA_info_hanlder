@@ -145,7 +145,7 @@ class CourseAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_courses', 'video_status', 'get_link', 'get_link_yt', 'platform_status', 'youtube_status', 'translation_issue', 'last_modified')
+    list_display = ('title', 'get_courses', 'video_status', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status', 'youtube_status', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
     list_filter = ('video_status', 'platform_status', 'youtube_status', 'translation_issue', CourseFilter)
     search_fields = ['title']
@@ -167,10 +167,20 @@ class VideoAdmin(admin.ModelAdmin):
             return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.portal_link, "TP Link")
     get_link.short_description = 'Translation portal'
 
-    def get_link_yt(self, obj):
+    def get_link_tr_yt(self, obj):
         if obj.translated_yt_link:
             return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.translated_yt_link, "KA Link")
-    get_link_yt.short_description = 'Translated yt'
+    get_link_tr_yt.short_description = 'Translated yt'
+    
+    def get_link_yt(self, obj):
+        if obj.yt_link:
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.yt_link, "KA Link")
+    get_link_yt.short_description = 'Original yt'
+    
+    def get_link_portal(self, obj):
+        if obj.localized_link:
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.localized_link, "KA Link")
+    get_link_portal.short_description = 'Khan academy'
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """

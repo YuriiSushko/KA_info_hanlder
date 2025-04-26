@@ -68,6 +68,7 @@ class Item(models.Model):
 class Video(models.Model):
     title = models.CharField(max_length=200)
     portal_link = models.URLField(unique=True)
+    localized_link = models.URLField(null=True, blank=True)
     yt_link = models.URLField(null=True, blank=True)
     translated_yt_link = models.URLField(null=True, blank=True)
     courses = models.ManyToManyField(Course, related_name='videos')
