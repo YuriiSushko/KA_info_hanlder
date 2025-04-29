@@ -164,8 +164,9 @@ class VideoStatusFilter(admin.SimpleListFilter):
         return queryset
 
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
+    list_display = ('id','title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
+    list_display_links = ['title'] 
     list_filter = (VideoStatusFilter, 'translation_issue', CourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')

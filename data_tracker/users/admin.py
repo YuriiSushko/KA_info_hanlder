@@ -14,6 +14,7 @@ class MortalsAdmin(BaseUserAdmin):
         ),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'get_roles','last_seen')
+    list_editable = ('is_active', 'is_staff')
     ordering = ('email',)
     search_fields = ('email', 'first_name', 'last_name')
     filter_horizontal = ('groups', 'user_permissions',)
