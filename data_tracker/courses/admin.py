@@ -24,10 +24,29 @@ class CourseFilter(SimpleListFilter):
         if self.value():
             return queryset.filter(courses__id=self.value())
         return queryset
+    
+class ItemStatusFilter(admin.SimpleListFilter):
+    title = ('Item Status')
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        all_statuses = list(Status.objects.all())
+        choices = [
+            (s.pk, s.title) 
+            for s in all_statuses 
+            if not s.video_related_status
+        ]
+        return choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status__pk=self.value())
+        return queryset
+
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
-    list_filter = ('type', 'status', CourseFilter)
+    list_filter = ('type', ItemStatusFilter, CourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
 
@@ -98,13 +117,26 @@ class ItemAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Status.objects.filter(pk__in=pks)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+class WhoPerformedFilter(admin.SimpleListFilter):
+    title = 'Who performed'
+    parameter_name = 'who'
+
+    def lookups(self, request, model_admin):
+        user_ids = ActionLog.objects.filter(who__isnull=False).values_list('who_id', flat=True).distinct()
+        users = Mortals.objects.filter(id__in=user_ids)
+        return [(user.id, f"{user.first_name} {user.last_name}") for user in users]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(who_id=self.value())
+        return queryset
 
 class ActionLogAdmin(admin.ModelAdmin):
     list_display = ('action', 'type', 'get_object_link', 'who', 'get_local_time', 'new_status', 'comment')
     list_display_links = None
     date_hierarchy = 'date'
     search_fields = ['title', 'type', 'comment']
-    list_filter = ('action', 'type', 'new_status')
+    list_filter = ('action', 'type', 'new_status', WhoPerformedFilter)
 
     def get_object_link(self, obj):
         if hasattr(obj, 'item') and obj.item_id:
