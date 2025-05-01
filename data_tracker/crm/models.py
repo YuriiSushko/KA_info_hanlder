@@ -3,6 +3,7 @@ from data_tracker.users.models import Mortals
 from django.core.validators import RegexValidator
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import ArrayField
 
 class SotialRole(models.Model):
     title = models.CharField(max_length=100, verbose_name="Роль")
@@ -37,6 +38,17 @@ class EventType(models.Model):
     def __str__(self):
         return self.title
 
+class OrgClass(models.Model):
+    name = models.CharField(max_length=128, verbose_name="Ім'я організації")
+    description = models.TextField(max_length=128, blank=True, null=True, verbose_name="Опис")
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Клас організації"
+        verbose_name_plural = "Класи організації"
+
 class Institution(models.Model):
     name = models.CharField(max_length=225, verbose_name="Ім'я організації")
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
@@ -48,6 +60,7 @@ class Institution(models.Model):
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
     primary_source = models.CharField(max_length=225, verbose_name="Першоджерело", blank=True, null=True,)
     full_addr  = models.TextField(blank=True, null=True, verbose_name="Адреса")
+    org_class = models.ManyToManyField(OrgClass, blank=True, verbose_name="Клас організації")
     
     class Meta:
         verbose_name = "Організація"

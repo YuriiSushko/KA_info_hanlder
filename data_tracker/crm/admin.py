@@ -1,6 +1,6 @@
 from data_tracker.admin_site import custom_admin_site
 from django.contrib import admin
-from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant, ContactInfoInline, PhoneNumber
+from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant, ContactInfoInline, PhoneNumber, OrgClass
 from data_tracker.crm.forms import EventParticipantForm
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.admin import GenericTabularInline
@@ -26,7 +26,8 @@ class PhoneNumberInline(GenericTabularInline):
     extra = 1
     
 class InstitutionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone_number_filter', 'email', 'role', 'add_info')
+    list_display = ('name', 'phone_number_filter', 'email', 'role', 'get_class_orgs', 'add_info')
+    list_filter = ('role', 'org_class') 
     search_fields = ['name', 'email']
     inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     
@@ -57,6 +58,10 @@ class InstitutionAdmin(admin.ModelAdmin):
         return text
     phone_number_filter.short_description = "Номер телефону"
     
+    def get_class_orgs(self, obj):
+        return ", ".join([org_class.name for org_class in obj.org_class.all()])
+    get_class_orgs.short_description = 'Клас організації'
+    
 class InstitutionListFilter(SimpleListFilter):
     title = 'Організації'
     parameter_name = 'institution_id'
@@ -73,6 +78,7 @@ class InstitutionListFilter(SimpleListFilter):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('name', 'surname','phone_number_filter','email', 'institutions_list', 'sotial_role', 'ka_role', 'add_info')
     list_filter = (InstitutionListFilter,)
+    list_display_links = ['name', 'surname']
     search_fields = ['name', 'surname', 'email', 'institutions__name']
     inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     
@@ -118,6 +124,7 @@ class EventParticipantInline(admin.TabularInline):
 class EventAdmin(admin.ModelAdmin):
     autocomplete_fields = ['conductor']
     list_display = ('event_type', 'conductor', 'event_date', 'location', 'created_at', 'recent_participants')
+    list_display_links = ['conductor']
     list_filter = ('event_type', 'conductor',)
     search_fields = ['event_type__title', 'location', 'notes']
     inlines = [EventParticipantInline]
@@ -146,3 +153,4 @@ custom_admin_site.register(EventType, EventTypeAdmin)
 custom_admin_site.register(Institution, InstitutionAdmin)
 custom_admin_site.register(User, UserAdmin)
 custom_admin_site.register(Event, EventAdmin)
+custom_admin_site.register(OrgClass)
