@@ -33,6 +33,14 @@ TEMPLATES = [
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_NAME'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD_PROD'),
+        'HOST': env('POSGRES_HOST_INTERNAL'),
+        'PORT': '5432',
+    },
+    'mongo': {
         'ENGINE': 'djongo',
         'NAME': env('DB_NAME',  default='Text'),  # Use environment variable for DB name, with default 'katext'
         'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB

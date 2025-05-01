@@ -14,25 +14,6 @@ class Status(models.Model):
     def __str__(self):
         return self.title
 
-
-# # Role model to define roles for people
-# class Role(models.Model):
-#     title = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return self.title
-
-
-# # People model to store people's details and their roles
-# class People(models.Model):
-#     name = models.CharField(max_length=200)
-#     surname = models.CharField(max_length=100)
-#     roles = models.ManyToManyField(Role)  # Many-to-many relationship with Role
-
-#     def __str__(self):
-#         return f"{self.name} {self.surname}"
-
-
 # Course model to store course details and link to Items
 class Course(models.Model):
     title = models.CharField(max_length=200)
@@ -49,9 +30,9 @@ class Item(models.Model):
         ARTICLE = 'article', 'Article'
         EXERCISE = 'exercise', 'Exercise'
 
-    title = models.CharField(max_length=200)
-    link = models.URLField(unique=True)  # Store a URL as a link
-    external_link = models.URLField(null=True, blank=True)  # Link to the item on the site
+    title = models.CharField(max_length=512)
+    link = models.URLField(max_length=512, unique=True)  # Store a URL as a link
+    external_link = models.URLField(max_length=512, null=True, blank=True)  # Link to the item on the site
     courses = models.ManyToManyField(Course, related_name='items')  # Many-to-many relationship with Course
     type = models.CharField(max_length=10, choices=ItemType.choices)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True)  # Foreign key to Status
@@ -60,7 +41,7 @@ class Item(models.Model):
     number_of_words = models.IntegerField()  # Store number of words
     updated_by = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)
     comments = models.TextField(blank=True)  # Store any comments
-    last_modified = models.DateTimeField(auto_now=True)  # Timestamp for last modification
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -71,6 +52,7 @@ class Video(models.Model):
     localized_link = models.URLField(null=True, blank=True)
     yt_link = models.URLField(null=True, blank=True)
     translated_yt_link = models.URLField(null=True, blank=True)
+    preview_link = models.URLField(null=True, blank=True)
     courses = models.ManyToManyField(Course, related_name='videos')
     video_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='video_status')
     platform_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='platform_status')
@@ -78,9 +60,9 @@ class Video(models.Model):
     translation_issue = models.BooleanField(default=False)
     auditor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='audited_videos',blank=True)
     actor = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, related_name='translated_videos',blank=True)
-    duration = models.DurationField()
+    duration = models.DurationField(null=True,blank=True)
     updated_by = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)
-    comments = models.TextField(blank=True)
+    comments = models.TextField(null=True, blank=True)
     type = models.CharField(max_length=10,blank=True, null=True, default="Video")
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -101,8 +83,8 @@ class ActionLog(models.Model):
     video = models.ForeignKey(Video, on_delete=models.SET_NULL, null=True, blank=True)
     who = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True)  # Track who performed the action
     new_status = models.ForeignKey('Status', on_delete=models.SET_NULL, null=True, blank=True)  # Adjust based on your model
-    date = models.DateTimeField(auto_now_add=True)
-    comment = models.TextField(blank=True)
+    date = models.DateTimeField(auto_now=True)
+    comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.action} {self.type} by {self.who.first_name} {self.who.last_name} at {self.date}"

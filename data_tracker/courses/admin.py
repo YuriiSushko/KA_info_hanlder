@@ -120,7 +120,7 @@ class ActionLogAdmin(admin.ModelAdmin):
 
     def get_local_time(self, obj):
         return obj.date.strftime('%Y-%m-%d %H:%M:%S')
-    get_local_time.short_description = 'Local Time'
+    get_local_time.short_description = 'Last modified'
 
     # readonly_fields = ('action', 'type', 'item', 'who', 'new_status', 'date', 'comment')
 

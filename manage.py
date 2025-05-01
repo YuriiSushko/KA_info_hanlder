@@ -23,11 +23,11 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
         
-    if len(sys.argv) > 1 and sys.argv[1] in ['makemigrations', 'migrate', 'createsuperuser', 'import_items', 'import_users', 'import_videos', 'help', 'replace_translator', 'collectstatic', 'showmigrations']:
-        execute_from_command_line(sys.argv)
-    else:
+    if len(sys.argv) > 1 and sys.argv[1] in ['runserver']:
         port = os.environ.get('PORT', '8000')  # Use '8000' as default if PORT is not set
         execute_from_command_line(['manage.py', 'runserver', f'0.0.0.0:{port}'])
+    else:
+        execute_from_command_line(sys.argv)
         
 
 if __name__ == '__main__':

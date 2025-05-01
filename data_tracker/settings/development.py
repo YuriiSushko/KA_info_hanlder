@@ -8,11 +8,27 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'katext.com']  # Add any o
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_NAME'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD_DEV'),
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'postgres_external': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_NAME'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD_PROD'),
+        'HOST': env('POSGRES_HOST_EXTERNAL'),
+        'PORT': '5432',
+    },
+    'mongo': {
         'ENGINE': 'djongo',
-        'NAME': env('DB_NAME_DEV',  default='DEVELOPMENT'),  # Use environment variable for DB name, with default 'katext'
-        'ENFORCE_SCHEMA': True,  # Ensures schema enforcement on MongoDB
+        'NAME': env('DB_NAME_DEV',  default='DEVELOPMENT'),
+        'ENFORCE_SCHEMA': True,
         'CLIENT': {
-            'host': env('DB_HOST'),  # Use environment variable for MongoDB connection string
+            'host': env('DB_HOST'),
         }
     }
 }
