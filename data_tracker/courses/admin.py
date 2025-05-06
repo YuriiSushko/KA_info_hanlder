@@ -1,9 +1,13 @@
 from django.contrib import admin
-from data_tracker.courses.models import Course, Status, Item, ActionLog, Video
+from data_tracker.courses.models import Course, Status, Item, ActionLog, Video, BugType, BugReport
 from data_tracker.users.models import Mortals, Roles
+from data_tracker.crm.models import User
 from django.utils.html import format_html
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
+from data_tracker.courses.forms import BugReportAdminForm
+from django.urls import reverse
 
 class CourseFilter(SimpleListFilter):
     title = ('Course')
@@ -276,9 +280,122 @@ class VideoAdmin(admin.ModelAdmin):
         courses = obj.courses.all()
         return ", ".join(course.title for course in courses) if courses else "None"
     get_courses.short_description = 'Courses'
+    
+class FilteredContentTypeListFilter(SimpleListFilter):
+    title = 'Content Type'
+    parameter_name = 'content_type'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('video', 'Video'),
+            ('article', 'Article'),
+            ('exercise', 'Exercise'),
+        ]
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'video':
+            ct = ContentType.objects.get(model='video')
+            return queryset.filter(content_type=ct)
+        elif value in ['article', 'exercise']:
+            ct = ContentType.objects.get(model='item')
+            return queryset.filter(content_type=ct, object_id__in=Item.objects.filter(type=value).values_list('pk'))
+        return queryset
+    
+class FilteredReportedByListFilter(SimpleListFilter):
+    title = 'Reported By'
+    parameter_name = 'reported_by'
+
+    def lookups(self, request, model_admin):
+        options = []
+
+        for model in [Mortals, User]:
+            ct = ContentType.objects.get_for_model(model)
+            ids = BugReport.objects.filter(
+                reported_by_content_type=ct
+            ).values_list('reported_by_object_id', flat=True).distinct()
+            instances = model.objects.filter(pk__in=ids)
+            options += [(f"{ct.pk}-{i.pk}", f"{i}") for i in instances]
+
+        return options
+
+    def queryset(self, request, queryset):
+        val = self.value()
+        if val:
+            try:
+                ct_pk, obj_pk = map(int, val.split('-'))
+                return queryset.filter(
+                    reported_by_content_type_id=ct_pk,
+                    reported_by_object_id=obj_pk
+                )
+            except (ValueError, TypeError):
+                return queryset.none()
+        return queryset
+
+
+
+class FilteredAssignedToListFilter(SimpleListFilter):
+    title = 'Assigned To'
+    parameter_name = 'assigned_to'
+
+    def lookups(self, request, model_admin):
+        users = BugReport.objects.exclude(assigned_to__isnull=True).values_list('assigned_to', flat=True).distinct()
+        return [(user.pk, str(user)) for user in Mortals.objects.filter(pk__in=users)]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(assigned_to__id=self.value())
+        return queryset
+
+
+class BugReportAdmin(admin.ModelAdmin):
+    form = BugReportAdminForm
+    list_display = ('title', 'related_object_title', 'content_type_label', 'bug_type', 'assigned_to', 'is_resolved', 'reported_by', 'added_by', 'created_at')
+    list_filter = (FilteredContentTypeListFilter, FilteredAssignedToListFilter, FilteredReportedByListFilter, 'is_resolved')
+    list_editable = ['is_resolved']
+    search_fields = ['title']
+    
+    def content_type_label(self, obj):
+        ct = obj.content_type.model
+        if ct == 'video':
+            return 'Video'
+        elif ct == 'item':
+            if hasattr(obj.content_object, 'type'):
+                if obj.content_object.type == 'article':
+                    return 'Article'
+                elif obj.content_object.type == 'exercise':
+                    return 'Exercise'
+            return 'Item'
+        return ct.capitalize()
+    content_type_label.short_description = 'Content Type'
+    
+    def related_object_title(self, obj):
+        try:
+            content_object = obj.content_object
+            if not content_object:
+                return f"[Missing Object ID {obj.object_id}]"
+
+            ct = obj.content_type
+            admin_url = reverse(f"admin:{ct.app_label}_{ct.model}_change", args=[obj.object_id])
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', admin_url, str(content_object))
+        except Exception:
+            return f"[Broken Link ID {obj.object_id}]"
+
+    related_object_title.short_description = 'Content Title'
+    
+    def save_model(self, request, obj, form, change):
+        obj.added_by = request.user
+        super().save_model(request, obj, form, change)
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('bug_type', 'content_type', 'assigned_to')
+
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Status, StatusAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(ActionLog, ActionLogAdmin)
 admin.site.register(Video, VideoAdmin)
+admin.site.register(BugReport, BugReportAdmin)
+admin.site.register(BugType)

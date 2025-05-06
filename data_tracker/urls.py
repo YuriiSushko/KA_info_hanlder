@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.http import HttpResponse
 from data_tracker.admin_site import custom_admin_site
 from data_tracker.crm.autocomplete import LotsOfParticipantsAutocomplete
+from data_tracker.courses.autocomplete import ContentObjectAutocomplete, PeopleAutocomplete, MortalsAutocomplete
 
 # Add a view for the root URL
 def home(request):
@@ -38,5 +39,20 @@ urlpatterns = [
         'participant-autocomplete/',
         LotsOfParticipantsAutocomplete.as_view(),
         name='participant-autocomplete'
+    ),
+    path(
+        'content-object-autocomplete/',
+        ContentObjectAutocomplete.as_view(),
+        name='content-object-autocomplete'
+    ),
+    
+    path('people-autocomplete/', 
+        PeopleAutocomplete.as_view(),
+        name='people-autocomplete'
+    ),
+    
+    path('mortals-autocomplete/', 
+        MortalsAutocomplete.as_view(),
+        name='mortals-autocomplete'
     ),
 ]

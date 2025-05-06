@@ -1,5 +1,7 @@
 from django.db import models
 from data_tracker.users.models import Mortals, Roles
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 # Status model to define the status for items
 class Status(models.Model):
@@ -89,3 +91,41 @@ class ActionLog(models.Model):
     def __str__(self):
         return f"{self.action} {self.type} by {self.who.first_name} {self.who.last_name} at {self.date}"
     
+class BugType(models.Model):
+    name = models.CharField(max_length=255)    
+    description = models.TextField(null=True, blank=True)
+    
+    class Meta:
+        verbose_name = ("Bug type")
+        verbose_name_plural = ("Bug types")
+
+    def __str__(self):
+        return self.name
+
+    
+class BugReport(models.Model):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='bug_content_type')
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    
+    reported_by_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True, related_name='bug_reported_by_type')
+    reported_by_object_id = models.PositiveIntegerField(null=True, blank=True)
+    reported_by = GenericForeignKey('reported_by_content_type', 'reported_by_object_id')
+
+    title = models.CharField(max_length=255)
+    bug_type = models.ForeignKey(BugType, on_delete=models.CASCADE)
+    description = models.TextField()
+    assigned_to = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_to")
+    created_at = models.DateTimeField(auto_now=True)
+    is_resolved = models.BooleanField(default=False)
+    added_by = models.ForeignKey(Mortals, on_delete=models.SET_NULL, null=True, blank=True, related_name="added_by")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['content_type', 'object_id']),
+        ]
+        verbose_name = ("Bug")
+        verbose_name_plural = ("Bugs")
+
+    def __str__(self):
+        return f"{self.title} ({self.content_type} #{self.object_id})"
