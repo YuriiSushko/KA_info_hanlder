@@ -18,7 +18,14 @@ class Status(models.Model):
 
 # Course model to store course details and link to Items
 class Course(models.Model):
+    class CourseType(models.TextChoices):
+        UKR_MATH = 'math(ukraine)', 'Math(Ukraine)'
+        KA_MATH = 'math(khan academy)', 'Math(Khan Academy)'
+        KA_SCIENCE = 'science(khan academy)', 'Science(Khan Academy)'
+        UKR_SCIENCE = 'science(ukraine)', 'Science(Ukraine)'
+        
     title = models.CharField(max_length=200)
+    course_type = models.CharField(max_length=69, choices=CourseType.choices, default=CourseType.KA_MATH)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

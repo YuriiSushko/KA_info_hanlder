@@ -47,10 +47,62 @@ class ItemStatusFilter(admin.SimpleListFilter):
             return queryset.filter(status__pk=self.value())
         return queryset
 
+class UaMathCourseFilter(admin.SimpleListFilter):
+    title = ('math(Ukraine)')
+    parameter_name = 'math_ukraine'
+
+    def lookups(self, request, model_admin):
+        courses = Course.objects.all()
+        return [(course.id, course.title) for course in courses.filter(course_type='math(ukraine)')]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(courses__id=self.value())
+        return queryset
+    
+class KaMathCourseFilter(admin.SimpleListFilter):
+    title = ('math(Khan Academy)')
+    parameter_name = 'math_khan_academy'
+
+    def lookups(self, request, model_admin):
+        courses = Course.objects.all()
+        return [(course.id, course.title) for course in courses.filter(course_type='math(khan academy)')]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(courses__id=self.value())
+        return queryset
+
+class UaScienceCourseFilter(admin.SimpleListFilter):
+    title = ('science(Ukraine)')
+    parameter_name = 'science_ukraine'
+
+    def lookups(self, request, model_admin):
+        courses = Course.objects.all()
+        return [(course.id, course.title) for course in courses.filter(course_type='science(ukraine)')]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(courses__id=self.value())
+        return queryset
+    
+class KaScienceCourseFilter(admin.SimpleListFilter):
+    title = ('science(Khan Academy)')
+    parameter_name = 'science_khan_academy'
+
+    def lookups(self, request, model_admin):
+        courses = Course.objects.all()
+        return [(course.id, course.title) for course in courses.filter(course_type='science(khan academy)')]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(courses__id=self.value())
+        return queryset
+
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
-    list_filter = ('type', ItemStatusFilter, CourseFilter)
+    list_filter = ('type', ItemStatusFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
 
@@ -64,26 +116,6 @@ class ItemAdmin(admin.ModelAdmin):
         """
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
-
-    # def get_auditor(self, obj):
-    #     """
-    #     Fetch the specific 'Auditor' for the item.
-    #     This will return only the user assigned as the auditor for the given item.
-    #     """
-    #     if obj.auditor:
-    #         return f"{obj.auditor.first_name} {obj.auditor.last_name}"
-    #     return "None"
-    # get_auditor.short_description = 'Auditor'
-
-    # def get_translator(self, obj):
-    #     """
-    #     Fetch the specific 'Translator' for the item.
-    #     This will return only the user assigned as the translator for the given item.
-    #     """
-    #     if obj.translator:
-    #         return f"{obj.translator.first_name} {obj.translator.last_name}"
-    #     return "None"
-    # get_translator.short_description = 'Translator'
     
     def get_courses(self, obj):
         """
@@ -177,9 +209,9 @@ class StatusAdmin(admin.ModelAdmin):
 
 class CourseAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at',)
-    list_display = ('title', 'description', 'created_at')
+    list_display = ('title', 'description', 'course_type', 'created_at')
     search_fields = ['title']
-    list_filter = ('created_at',)
+    list_filter = ('created_at','course_type')
 
 class VideoStatusFilter(admin.SimpleListFilter):
     title = ('Video Status')
@@ -203,7 +235,7 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
     list_display_links = ['title'] 
-    list_filter = (VideoStatusFilter, 'translation_issue', CourseFilter)
+    list_filter = (VideoStatusFilter, 'translation_issue', UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     

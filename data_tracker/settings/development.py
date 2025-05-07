@@ -7,15 +7,15 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'katext.com']  # Add any o
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': env('POSTGRES_NAME'),
+    #     'USER': env('POSTGRES_USER'),
+    #     'PASSWORD': env('POSTGRES_PASSWORD_DEV'),
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_NAME'),
-        'USER': env('POSTGRES_USER'),
-        'PASSWORD': env('POSTGRES_PASSWORD_DEV'),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    },
-    'postgres_external': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('POSTGRES_NAME'),
         'USER': env('POSTGRES_USER'),
