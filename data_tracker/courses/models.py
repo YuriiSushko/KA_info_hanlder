@@ -7,6 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 class Status(models.Model):
     title = models.CharField(max_length=100)
     video_related_status = models.BooleanField(default=False)
+    platform_related_status = models.BooleanField(default=False, blank=True)
+    youtube_related_status = models.BooleanField(default=False, blank=True)
     comments = models.TextField()
     
     class Meta:

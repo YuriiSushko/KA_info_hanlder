@@ -9,7 +9,7 @@ from data_tracker.courses.filters import *
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
-    list_filter = ('type', ItemStatusFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    list_filter = ('type', ItemStatusFilter, ItemAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
 
@@ -95,8 +95,8 @@ class ActionLogAdmin(admin.ModelAdmin):
         return False
 
 class StatusAdmin(admin.ModelAdmin):
-    list_display = ('title', 'comments', 'video_related_status')
-    list_editable = ['video_related_status']
+    list_display = ('title', 'comments', 'video_related_status', 'platform_related_status', 'youtube_related_status')
+    list_editable = ['video_related_status', 'platform_related_status', 'youtube_related_status']
     search_fields = ['title']
     list_filter = ('title',)
 
@@ -107,10 +107,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_filter = ('created_at','course_type')
 
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('id','title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
+    list_display = ('id','title', 'get_courses', 'combined_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
     list_display_links = ['title'] 
-    list_filter = (VideoStatusFilter, 'translation_issue', VideoAuditorFilter,UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    list_filter = (VideoStatusFilter, 'translation_issue', VideoAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     
@@ -126,21 +126,15 @@ class VideoAdmin(admin.ModelAdmin):
         """
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
-        
-    def video_status_display(self, obj):
-        return obj.video_status.title if obj.video_status else '-'
-    video_status_display.short_description = 'Video Status'
-    video_status_display.admin_order_field = 'video_status__title'
-
-    def platform_status_display(self, obj):
-        return obj.platform_status.title if obj.platform_status else '-'
-    platform_status_display.short_description = 'Platform Status'
-    platform_status_display.admin_order_field = 'platform_status__title'
-
-    def youtube_status_display(self, obj):
-        return obj.youtube_status.title if obj.youtube_status else '-'
-    youtube_status_display.short_description = 'YouTube Status'
-    youtube_status_display.admin_order_field = 'youtube_status__title'
+    
+    def combined_status_display(self, obj):
+        statuses = [
+            obj.video_status.title if obj.video_status else None,
+            obj.platform_status.title if obj.platform_status else None,
+            obj.youtube_status.title if obj.youtube_status else None,
+        ]
+        return ", ".join(filter(None, statuses)) or "—"
+    combined_status_display.short_description = "Statuses"
 
     def get_link(self, obj):
         if obj.portal_link:
@@ -173,9 +167,17 @@ class VideoAdmin(admin.ModelAdmin):
         elif db_field.name == "actor":
             actor_role = Roles.objects.get(title="Actor")
             kwargs["queryset"] = Mortals.objects.filter(groups=actor_role)
-        elif db_field.name == 'video_status' or db_field.name == 'platform_status' or db_field.name == 'youtube_status':
+        elif db_field.name == 'video_status':
             all_statuses = list(Status.objects.all())
-            pks = [s.pk for s in all_statuses if s.video_related_status]
+            pks = [s.pk for s in all_statuses if s.video_related_status and not s.platform_related_status and not s.youtube_related_status]
+            kwargs['queryset'] = Status.objects.filter(pk__in=pks)
+        elif db_field.name == 'platform_status':
+            all_statuses = list(Status.objects.all())
+            pks = [s.pk for s in all_statuses if s.video_related_status and s.platform_related_status]
+            kwargs['queryset'] = Status.objects.filter(pk__in=pks)
+        elif db_field.name == 'youtube_status':
+            all_statuses = list(Status.objects.all())
+            pks = [s.pk for s in all_statuses if s.video_related_status and s.youtube_related_status]
             kwargs['queryset'] = Status.objects.filter(pk__in=pks)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     

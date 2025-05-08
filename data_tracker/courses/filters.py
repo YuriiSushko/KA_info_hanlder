@@ -161,17 +161,24 @@ class VideoStatusFilter(admin.SimpleListFilter):
     parameter_name = 'video_status'
 
     def lookups(self, request, model_admin):
-        all_statuses = list(Status.objects.all())
-        choices = [
-            (s.pk, s.title) 
-            for s in all_statuses 
-            if s.video_related_status
-        ]
-        return choices
+        try:
+            all_statuses = list(Status.objects.all())
+            choices = [
+                (s.pk, s.title) 
+                for s in all_statuses 
+                if s.video_related_status
+            ]
+            choices.append(('__none__', 'None'))
+            return choices
+        except Status.DoesNotExist:
+            return [('__none__', 'None')]
 
     def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(video_status__pk=self.value())
+        value = self.value()
+        if value == '__none__':
+            return queryset.filter(auditor__isnull=True)
+        elif value:
+            return queryset.filter(auditor__pk=value)
         return queryset
     
 class FilteredContentTypeListFilter(SimpleListFilter):
