@@ -207,8 +207,8 @@ class PlatformStatusFilter(admin.SimpleListFilter):
         return queryset
 
 class YoutubeStatusFilter(admin.SimpleListFilter):
-    title = ('Video Status')
-    parameter_name = 'video_status'
+    title = ('Youtube Status')
+    parameter_name = 'youtube_status'
 
     def lookups(self, request, model_admin):
         try:
