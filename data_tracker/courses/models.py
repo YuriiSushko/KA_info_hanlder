@@ -59,11 +59,11 @@ class Item(models.Model):
 
 class Video(models.Model):
     title = models.CharField(max_length=200)
-    portal_link = models.URLField(unique=True)
-    localized_link = models.URLField(null=True, blank=True)
-    yt_link = models.URLField(null=True, blank=True)
-    translated_yt_link = models.URLField(null=True, blank=True)
-    preview_link = models.URLField(null=True, blank=True)
+    portal_link = models.URLField(max_length=512,unique=True)
+    localized_link = models.URLField(max_length=512,null=True, blank=True)
+    yt_link = models.URLField(max_length=512,null=True, blank=True)
+    translated_yt_link = models.URLField(max_length=512,null=True, blank=True)
+    preview_link = models.URLField(max_length=512,null=True, blank=True)
     courses = models.ManyToManyField(Course, related_name='videos')
     video_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='video_status')
     platform_status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name='platform_status')
