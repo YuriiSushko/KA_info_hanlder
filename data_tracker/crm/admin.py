@@ -26,10 +26,14 @@ class PhoneNumberInline(GenericTabularInline):
     extra = 1
     
 class InstitutionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone_number_filter', 'email', 'role', 'get_class_orgs', 'add_info')
+    list_display = ('name', 'phone_number_filter', 'email', 'person_list', 'role', 'get_class_orgs', 'add_info')
     list_filter = ('role', 'org_class') 
     search_fields = ['name', 'email']
     inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
+    
+    def person_list(self, obj):
+        return ", ".join([str(person) for person in obj.people.all()])
+    person_list.short_description = "Персони"
     
     def add_info(self, obj):
         qs = obj.contact_info.exclude(value__isnull=True).exclude(value__exact='')
