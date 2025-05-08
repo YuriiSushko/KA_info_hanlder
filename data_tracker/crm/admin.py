@@ -1,6 +1,7 @@
 from data_tracker.admin_site import custom_admin_site
 from django.contrib import admin
 from data_tracker.crm.models import User, Institution, SotialRole, KaRole, Event, EventType, EventParticipant, ContactInfoInline, PhoneNumber, OrgClass
+from data_tracker.users.models import Mortals
 from data_tracker.crm.forms import EventParticipantForm
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.admin import GenericTabularInline
@@ -124,12 +125,25 @@ class EventParticipantInline(admin.TabularInline):
     extra = 1
     fields = ('participant',) 
     exclude = ('content_type','object_id')
+    
+class ConductorListFilter(SimpleListFilter):
+    title = 'хто проводить'
+    parameter_name = 'conductor_id'
+    
+    def lookups(self, request, model_admin):
+        conductors = Event.objects.exclude(conductor__isnull=True).values_list('conductor', flat=True).distinct()
+        return [(user.pk, str(user)) for user in Mortals.objects.filter(pk__in=conductors)]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(conductor__id=self.value())
+        return queryset
 
 class EventAdmin(admin.ModelAdmin):
     autocomplete_fields = ['conductor']
     list_display = ('event_type', 'conductor', 'event_date', 'location', 'created_at', 'recent_participants')
     list_display_links = ['conductor']
-    list_filter = ('event_type', 'conductor',)
+    list_filter = ('event_type', ConductorListFilter,)
     search_fields = ['event_type__title', 'location', 'notes']
     inlines = [EventParticipantInline]
     
