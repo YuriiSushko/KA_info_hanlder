@@ -107,10 +107,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_filter = ('created_at','course_type')
 
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('id','title', 'get_courses', 'combined_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'translation_issue', 'last_modified')
+    list_display = ('id','title', 'get_courses', 'combined_status_display', 'get_links', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
     list_display_links = ['title'] 
-    list_filter = (VideoStatusFilter, 'translation_issue', VideoAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    list_filter = (VideoStatusFilter, YoutubeStatusFilter, PlatformStatusFilter, 'translation_issue', VideoAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     
@@ -136,25 +136,19 @@ class VideoAdmin(admin.ModelAdmin):
         return ", ".join(filter(None, statuses)) or "—"
     combined_status_display.short_description = "Statuses"
 
-    def get_link(self, obj):
+    def get_links(self, obj):
+        links = []
+        
         if obj.portal_link:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.portal_link, "TP Link")
-    get_link.short_description = 'Translation portal'
-
-    def get_link_tr_yt(self, obj):
+            links.append(format_html('<a href="{}" target="_blank" rel="noopener noreferrer">TP Link</a>', obj.portal_link))
         if obj.translated_yt_link:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.translated_yt_link, "KA Link")
-    get_link_tr_yt.short_description = 'Translated yt'
-    
-    def get_link_yt(self, obj):
+            links.append(format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Translated YT</a>', obj.translated_yt_link))
         if obj.yt_link:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.yt_link, "KA Link")
-    get_link_yt.short_description = 'Original yt'
-    
-    def get_link_portal(self, obj):
+            links.append(format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Original YT</a>', obj.yt_link))
         if obj.localized_link:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', obj.localized_link, "KA Link")
-    get_link_portal.short_description = 'Khan academy'
+            links.append(format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Khan Academy</a>', obj.localized_link))
+        return format_html(" | ".join(links)) if links else "—"
+    get_links.short_description = 'Links'    
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """

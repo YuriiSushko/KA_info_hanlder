@@ -166,7 +166,7 @@ class VideoStatusFilter(admin.SimpleListFilter):
             choices = [
                 (s.pk, s.title) 
                 for s in all_statuses 
-                if s.video_related_status
+                if s.video_related_status and not s.platform_related_status and not s.youtube_related_status
             ]
             choices.append(('__none__', 'None'))
             return choices
@@ -176,9 +176,59 @@ class VideoStatusFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         value = self.value()
         if value == '__none__':
-            return queryset.filter(auditor__isnull=True)
+            return queryset.filter(video_status__isnull=True)
         elif value:
-            return queryset.filter(auditor__pk=value)
+            return queryset.filter(video_status__pk=value)
+        return queryset
+    
+class PlatformStatusFilter(admin.SimpleListFilter):
+    title = ('Platform Status')
+    parameter_name = 'platform_status'
+
+    def lookups(self, request, model_admin):
+        try:
+            all_statuses = list(Status.objects.all())
+            choices = [
+                (s.pk, s.title) 
+                for s in all_statuses 
+                if s.video_related_status and s.platform_related_status
+            ]
+            choices.append(('__none__', 'None'))
+            return choices
+        except Status.DoesNotExist:
+            return [('__none__', 'None')]
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == '__none__':
+            return queryset.filter(platfrom_status__isnull=True)
+        elif value:
+            return queryset.filter(platform_status__pk=value)
+        return queryset
+
+class YoutubeStatusFilter(admin.SimpleListFilter):
+    title = ('Video Status')
+    parameter_name = 'video_status'
+
+    def lookups(self, request, model_admin):
+        try:
+            all_statuses = list(Status.objects.all())
+            choices = [
+                (s.pk, s.title) 
+                for s in all_statuses 
+                if s.video_related_status and s.youtube_related_status
+            ]
+            choices.append(('__none__', 'None'))
+            return choices
+        except Status.DoesNotExist:
+            return [('__none__', 'None')]
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == '__none__':
+            return queryset.filter(youtube_status__isnull=True)
+        elif value:
+            return queryset.filter(youtube_status__pk=value)
         return queryset
     
 class FilteredContentTypeListFilter(SimpleListFilter):
