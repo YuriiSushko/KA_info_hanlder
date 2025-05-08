@@ -1,104 +1,11 @@
 from django.contrib import admin
 from data_tracker.courses.models import Course, Status, Item, ActionLog, Video, BugType, BugReport
 from data_tracker.users.models import Mortals, Roles
-from data_tracker.crm.models import User
 from django.utils.html import format_html
-from django.contrib.admin import SimpleListFilter
 from django.utils.translation import gettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 from data_tracker.courses.forms import BugReportAdminForm
 from django.urls import reverse
-
-class CourseFilter(SimpleListFilter):
-    title = ('Course')
-    parameter_name = 'course'
-
-    def lookups(self, request, model_admin):
-        """
-        Defines the options that will be shown in the filter dropdown.
-        We will list all available courses.
-        """
-        courses = Course.objects.all()
-        return [(course.id, course.title) for course in courses]
-
-    def queryset(self, request, queryset):
-        """
-        Filters the queryset based on the selected course.
-        """
-        if self.value():
-            return queryset.filter(courses__id=self.value())
-        return queryset
-    
-class ItemStatusFilter(admin.SimpleListFilter):
-    title = ('Item Status')
-    parameter_name = 'status'
-
-    def lookups(self, request, model_admin):
-        all_statuses = list(Status.objects.all())
-        choices = [
-            (s.pk, s.title) 
-            for s in all_statuses 
-            if not s.video_related_status
-        ]
-        return choices
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(status__pk=self.value())
-        return queryset
-
-class UaMathCourseFilter(admin.SimpleListFilter):
-    title = ('math(Ukraine)')
-    parameter_name = 'math_ukraine'
-
-    def lookups(self, request, model_admin):
-        courses = Course.objects.all()
-        return [(course.id, course.title) for course in courses.filter(course_type='math(ukraine)')]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(courses__id=self.value())
-        return queryset
-    
-class KaMathCourseFilter(admin.SimpleListFilter):
-    title = ('math(Khan Academy)')
-    parameter_name = 'math_khan_academy'
-
-    def lookups(self, request, model_admin):
-        courses = Course.objects.all()
-        return [(course.id, course.title) for course in courses.filter(course_type='math(khan academy)')]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(courses__id=self.value())
-        return queryset
-
-class UaScienceCourseFilter(admin.SimpleListFilter):
-    title = ('science(Ukraine)')
-    parameter_name = 'science_ukraine'
-
-    def lookups(self, request, model_admin):
-        courses = Course.objects.all()
-        return [(course.id, course.title) for course in courses.filter(course_type='science(ukraine)')]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(courses__id=self.value())
-        return queryset
-    
-class KaScienceCourseFilter(admin.SimpleListFilter):
-    title = ('science(Khan Academy)')
-    parameter_name = 'science_khan_academy'
-
-    def lookups(self, request, model_admin):
-        courses = Course.objects.all()
-        return [(course.id, course.title) for course in courses.filter(course_type='science(khan academy)')]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(courses__id=self.value())
-        return queryset
-
+from data_tracker.courses.filters import *
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
@@ -153,20 +60,6 @@ class ItemAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Status.objects.filter(pk__in=pks)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-class WhoPerformedFilter(admin.SimpleListFilter):
-    title = 'Who performed'
-    parameter_name = 'who'
-
-    def lookups(self, request, model_admin):
-        user_ids = ActionLog.objects.filter(who__isnull=False).values_list('who_id', flat=True).distinct()
-        users = Mortals.objects.filter(id__in=user_ids)
-        return [(user.id, f"{user.first_name} {user.last_name}") for user in users]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(who_id=self.value())
-        return queryset
-
 class ActionLogAdmin(admin.ModelAdmin):
     list_display = ('action', 'type', 'get_object_link', 'who', 'get_local_time', 'new_status', 'comment')
     list_display_links = None
@@ -213,29 +106,11 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ['title']
     list_filter = ('created_at','course_type')
 
-class VideoStatusFilter(admin.SimpleListFilter):
-    title = ('Video Status')
-    parameter_name = 'video_status'
-
-    def lookups(self, request, model_admin):
-        all_statuses = list(Status.objects.all())
-        choices = [
-            (s.pk, s.title) 
-            for s in all_statuses 
-            if s.video_related_status
-        ]
-        return choices
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(video_status__pk=self.value())
-        return queryset
-
 class VideoAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'get_courses', 'video_status_display', 'get_link', 'get_link_portal','get_link_yt', 'get_link_tr_yt', 'platform_status_display', 'youtube_status_display', 'translation_issue', 'last_modified')
     list_editable = ['translation_issue']
     list_display_links = ['title'] 
-    list_filter = (VideoStatusFilter, 'translation_issue', UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    list_filter = (VideoStatusFilter, 'translation_issue', VideoAuditorFilter,UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     
@@ -312,73 +187,6 @@ class VideoAdmin(admin.ModelAdmin):
         courses = obj.courses.all()
         return ", ".join(course.title for course in courses) if courses else "None"
     get_courses.short_description = 'Courses'
-    
-class FilteredContentTypeListFilter(SimpleListFilter):
-    title = 'Content Type'
-    parameter_name = 'content_type'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('video', 'Video'),
-            ('article', 'Article'),
-            ('exercise', 'Exercise'),
-        ]
-
-    def queryset(self, request, queryset):
-        value = self.value()
-        if value == 'video':
-            ct = ContentType.objects.get(model='video')
-            return queryset.filter(content_type=ct)
-        elif value in ['article', 'exercise']:
-            ct = ContentType.objects.get(model='item')
-            return queryset.filter(content_type=ct, object_id__in=Item.objects.filter(type=value).values_list('pk'))
-        return queryset
-    
-class FilteredReportedByListFilter(SimpleListFilter):
-    title = 'Reported By'
-    parameter_name = 'reported_by'
-
-    def lookups(self, request, model_admin):
-        options = []
-
-        for model in [Mortals, User]:
-            ct = ContentType.objects.get_for_model(model)
-            ids = BugReport.objects.filter(
-                reported_by_content_type=ct
-            ).values_list('reported_by_object_id', flat=True).distinct()
-            instances = model.objects.filter(pk__in=ids)
-            options += [(f"{ct.pk}-{i.pk}", f"{i}") for i in instances]
-
-        return options
-
-    def queryset(self, request, queryset):
-        val = self.value()
-        if val:
-            try:
-                ct_pk, obj_pk = map(int, val.split('-'))
-                return queryset.filter(
-                    reported_by_content_type_id=ct_pk,
-                    reported_by_object_id=obj_pk
-                )
-            except (ValueError, TypeError):
-                return queryset.none()
-        return queryset
-
-
-
-class FilteredAssignedToListFilter(SimpleListFilter):
-    title = 'Assigned To'
-    parameter_name = 'assigned_to'
-
-    def lookups(self, request, model_admin):
-        users = BugReport.objects.exclude(assigned_to__isnull=True).values_list('assigned_to', flat=True).distinct()
-        return [(user.pk, str(user)) for user in Mortals.objects.filter(pk__in=users)]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(assigned_to__id=self.value())
-        return queryset
-
 
 class BugReportAdmin(admin.ModelAdmin):
     form = BugReportAdminForm

@@ -32,14 +32,14 @@ class InstitutionAdmin(admin.ModelAdmin):
     inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     
     def add_info(self, obj):
-        qs    = obj.contact_info.all()
+        qs = obj.contact_info.exclude(value__isnull=True).exclude(value__exact='')
         total = qs.count()
 
-        infos = [str(ci.contact_info) for ci in qs[:3]]
+        infos = [ci.value for ci in qs[:3]]
         result = ", ".join(infos)
         if total > 3:
             result += ", …"
-        return result
+        return result or "—"
     add_info.short_description = "Додатковий контакт"
     
     def phone_number_filter(self, obj):
@@ -87,14 +87,14 @@ class UserAdmin(admin.ModelAdmin):
     institutions_list.short_description = "Організації"
     
     def add_info(self, obj):
-        qs    = obj.contact_info.all()
+        qs = obj.contact_info.exclude(value__isnull=True).exclude(value__exact='')
         total = qs.count()
 
-        infos = [str(ci.contact_info) for ci in qs[:3]]
+        infos = [ci.value for ci in qs[:3]]
         result = ", ".join(infos)
         if total > 3:
             result += ", …"
-        return result
+        return result or "—"
     add_info.short_description = "Додатковий контакт"
     
     def phone_number_filter(self, obj):
