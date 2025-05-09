@@ -67,22 +67,33 @@ class BugReportAdminForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         model_type = self.data.get('model_type') or self.initial.get('model_type')
-
-        if self.instance and self.instance.pk:
-            # Use instance content_type to infer model_type
+        if not model_type and self.instance and self.instance.pk:
             model_type = self.instance.content_type.model
-            self.fields['model_type'].initial = model_type
-            self.fields['content_object'].initial = self.instance.object_id
 
         if model_type == 'video':
+            self.fields['model_type'].initial = model_type
+        elif model_type == 'item': 
+            if self.instance.content_object.type == 'article':
+                self.fields['model_type'].initial = 'article'
+            elif self.instance.content_object.type == 'exercise':
+                self.fields['model_type'].initial = 'exercise'
+                
+        print(self.fields['model_type'].initial)
+        
+        if model_type == 'video':
             self.fields['content_object'].queryset = Video.objects.all()
-        elif model_type == 'article':
+        elif self.instance.content_object.type == 'article':
             self.fields['content_object'].queryset = Item.objects.filter(type='article')
-        elif model_type == 'exercise':
+        elif self.instance.content_object.type == 'exercise':
             self.fields['content_object'].queryset = Item.objects.filter(type='exercise')
         else:
             self.fields['content_object'].queryset = Video.objects.none()
-        
+
+        # Set initial object if editing
+        if self.instance and self.instance.pk:
+            self.fields['content_object'].initial = self.instance.content_object
+            print(self.fields['content_object'].initial)
+            
     def save(self, commit=True):
         instance = super().save(commit=False)
 
