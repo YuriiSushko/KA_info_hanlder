@@ -82,9 +82,9 @@ class BugReportAdminForm(forms.ModelForm):
         
         if model_type == 'video':
             self.fields['content_object'].queryset = Video.objects.all()
-        elif self.instance.content_object.type == 'article':
+        elif model_type == 'article':
             self.fields['content_object'].queryset = Item.objects.filter(type='article')
-        elif self.instance.content_object.type == 'exercise':
+        elif model_type == 'exercise':
             self.fields['content_object'].queryset = Item.objects.filter(type='exercise')
         else:
             self.fields['content_object'].queryset = Video.objects.none()
