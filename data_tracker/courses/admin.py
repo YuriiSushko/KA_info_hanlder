@@ -218,7 +218,8 @@ class BugReportAdmin(admin.ModelAdmin):
     related_object_title.short_description = 'Content Title'
     
     def save_model(self, request, obj, form, change):
-        obj.added_by = request.user
+        if obj.added_by is None:
+            obj.added_by = request.user
         super().save_model(request, obj, form, change)
     
     def get_queryset(self, request):
