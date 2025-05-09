@@ -3,7 +3,6 @@ from data_tracker.users.models import Mortals, Roles
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-# Status model to define the status for items
 class Status(models.Model):
     title = models.CharField(max_length=100)
     video_related_status = models.BooleanField(default=False)
@@ -18,7 +17,6 @@ class Status(models.Model):
     def __str__(self):
         return self.title
 
-# Course model to store course details and link to Items
 class Course(models.Model):
     class CourseType(models.TextChoices):
         UKR_MATH = 'math(ukraine)', 'Math(Ukraine)'
@@ -34,8 +32,6 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-
-# Item model to store item details and link to multiple courses
 class Item(models.Model):
     class ItemType(models.TextChoices):
         ARTICLE = 'article', 'Article'
@@ -81,7 +77,6 @@ class Video(models.Model):
         return self.title
 
 
-# ActionLog model to track changes (create, update, delete) for items and courses
 class ActionLog(models.Model):
     ACTION_CHOICES = [
         ('create', 'Created'),

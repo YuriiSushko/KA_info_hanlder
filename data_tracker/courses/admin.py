@@ -83,8 +83,6 @@ class ActionLogAdmin(admin.ModelAdmin):
         return obj.date.strftime('%Y-%m-%d %H:%M:%S')
     get_local_time.short_description = 'Last modified'
 
-    # readonly_fields = ('action', 'type', 'item', 'who', 'new_status', 'date', 'comment')
-
     def has_add_permission(self, request, obj=None):
         return False
 

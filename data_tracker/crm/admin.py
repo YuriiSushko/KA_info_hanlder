@@ -156,13 +156,7 @@ class EventAdmin(admin.ModelAdmin):
         if total > 3:
             result += ", …"
         return result
-    recent_participants.short_description = "Учасники"
-
-    
-# class EventParticipantAdmin(admin.ModelAdmin):
-#     list_display = ('event', 'participant')
-#     search_fields = ('event__event_type__title',)
-    
+    recent_participants.short_description = "Учасники"  
     
 
 custom_admin_site.register(SotialRole, SotialRoleAdmin)

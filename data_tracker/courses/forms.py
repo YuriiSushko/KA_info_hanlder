@@ -128,8 +128,7 @@ class BugReportAdminForm(forms.ModelForm):
         except model.DoesNotExist:
             raise forms.ValidationError("Selected object does not exist.")
 
-        # Set content_type and object_id on instance
         cleaned_data['content_type'] = ContentType.objects.get_for_model(model)
         cleaned_data['object_id'] = obj.pk
-        cleaned_data['content_object'] = obj  # Optional, for use in form
+        cleaned_data['content_object'] = obj
         return cleaned_data

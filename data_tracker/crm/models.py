@@ -76,7 +76,6 @@ class User(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True, null=True, verbose_name="Основний номер телефону")
     phone_numbers = GenericRelation("PhoneNumber", related_query_name='phone_number_mul')
     email = models.EmailField(null=True, blank=True, verbose_name="Пошта")
-    # institution = models.ForeignKey(Institution, null=True, blank=True, verbose_name="Організація")
     sotial_role = models.ForeignKey(SotialRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Соціальна роль")
     ka_role = models.ForeignKey(KaRole, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль відносно нас")
     contact_info = GenericRelation("ContactInfoInline", related_query_name='contact_info')
