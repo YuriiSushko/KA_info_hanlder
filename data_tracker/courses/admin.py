@@ -3,15 +3,35 @@ from data_tracker.courses.models import Course, Status, Item, ActionLog, Video, 
 from data_tracker.users.models import Mortals, Roles
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from data_tracker.courses.forms import BugReportAdminForm
+from data_tracker.courses.forms import BugReportAdminForm, BugReportInlineForm
 from django.urls import reverse
+from django.contrib.contenttypes.admin import GenericTabularInline
 from data_tracker.courses.filters import *
+
+# class BugReportInline(GenericTabularInline):
+#     model = BugReport
+#     form = BugReportInlineForm
+#     extra = 0
+#     ct_field = "content_type"
+#     ct_fk_field = "object_id"
+
+#     def get_formset(self, request, obj=None, **kwargs):
+#         formset = super().get_formset(request, obj, **kwargs)
+
+#         class PrefilledFormSet(formset):
+#             def _construct_form(self, i, **kwargs):
+#                 form = super()._construct_form(i, **kwargs)
+#                 form._parent_obj = obj
+#                 return form
+
+#         return PrefilledFormSet
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
     list_filter = ('type', ItemStatusFilter, ItemAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
+    # inlines = [BugReportInline]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

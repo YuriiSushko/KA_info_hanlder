@@ -66,20 +66,18 @@ class BugReportAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        model_type = self.data.get('model_type') or self.initial.get('model_type')
-        if not model_type and self.instance and self.instance.pk:
+        if self.data:
+            model_type = self.data.get('model_type')
+        elif self.instance and self.instance.pk:
             model_type = self.instance.content_type.model
+            if model_type == 'item':
+                if self.instance.content_object.type == 'article':
+                    model_type = 'article'
+                elif self.instance.content_object.type == 'exercise':
+                    model_type = 'exercise'
+        else:
+            model_type = self.initial.get('model_type')
 
-        if model_type == 'video':
-            self.fields['model_type'].initial = model_type
-        elif model_type == 'item': 
-            if self.instance.content_object.type == 'article':
-                self.fields['model_type'].initial = 'article'
-            elif self.instance.content_object.type == 'exercise':
-                self.fields['model_type'].initial = 'exercise'
-                
-        print(self.fields['model_type'].initial)
-        
         if model_type == 'video':
             self.fields['content_object'].queryset = Video.objects.all()
         elif model_type == 'article':
@@ -88,16 +86,20 @@ class BugReportAdminForm(forms.ModelForm):
             self.fields['content_object'].queryset = Item.objects.filter(type='exercise')
         else:
             self.fields['content_object'].queryset = Video.objects.none()
-
-        # Set initial object if editing
+        
         if self.instance and self.instance.pk:
             self.fields['content_object'].initial = self.instance.content_object
-            print(self.fields['content_object'].initial)
+            self.fields['model_type'].initial = model_type
+            self.fields['reported_by'].initial = self.instance.reported_by
+            print(f"On init: {model_type}")
+            print(f"On init: {self.fields['content_object'].initial}")
             
     def save(self, commit=True):
         instance = super().save(commit=False)
-
         content_object = self.cleaned_data.get('content_object')
+        print(f"On save: {self.cleaned_data.get('model_type')}")
+        print(f"On save: {content_object}")
+        
         if content_object:
             instance.content_type = ContentType.objects.get_for_model(content_object.__class__)
             instance.object_id = content_object.pk
@@ -117,29 +119,64 @@ class BugReportAdminForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         model_type = cleaned_data.get('model_type')
-        object_id = self.data.get('content_object')
-
-        if not model_type or not object_id:
+        content_object = cleaned_data.get('content_object')
+        print(f"On clean: {model_type}")
+        print(f"On clean: {content_object}")     
+           
+        if not model_type or not content_object:
             raise forms.ValidationError("Please select both type and object.")
+        
+        if model_type == 'video' and not isinstance(content_object, Video):
+            raise forms.ValidationError("Selected object is not a Video.")
+        elif model_type == 'article' and not (isinstance(content_object, Item) and content_object.type == 'article'):
+            raise forms.ValidationError("Selected object is not an Article.")
+        elif model_type == 'exercise' and not (isinstance(content_object, Item) and content_object.type == 'exercise'):
+            raise forms.ValidationError(f"Selected object is not an Exercise.")
 
-        if model_type == 'video':
-            model = Video
-            queryset = model.objects.all()
-        elif model_type == 'article':
-            model = Item
-            queryset = model.objects.filter(type='article')
-        elif model_type == 'exercise':
-            model = Item
-            queryset = model.objects.filter(type='exercise')
-        else:
-            raise forms.ValidationError("Invalid model type.")
-
-        try:
-            obj = queryset.get(pk=object_id)
-        except model.DoesNotExist:
-            raise forms.ValidationError("Selected object does not exist.")
-
-        cleaned_data['content_type'] = ContentType.objects.get_for_model(model)
-        cleaned_data['object_id'] = obj.pk
-        cleaned_data['content_object'] = obj
+        cleaned_data['content_type'] = ContentType.objects.get_for_model(content_object.__class__)
+        cleaned_data['object_id'] = content_object.pk
+        cleaned_data['content_object'] = content_object
         return cleaned_data
+    
+# class BugReportInlineForm(forms.ModelForm):
+#     assigned_to = forms.ModelChoiceField(
+#         queryset=Mortals.objects.all(),
+#         widget=autocomplete.ModelSelect2(
+#             url='mortals-autocomplete',
+#             attrs={
+#                 'data-placeholder': 'Search users...',
+#                 'data-minimum-input-length': 0,
+#             }
+#         ),
+#         required=False,
+#         label="Assign to"
+#     )
+    
+#     reported_by = autocomplete.Select2GenericForeignKeyModelField(
+#         model_choice=[
+#             (Mortals, 'first_name'),
+#             (User, 'name'),
+#         ],
+#         widget=QuerySetSequenceSelect2(
+#             url='people-autocomplete',
+#             attrs={
+#                 'data-placeholder': 'Search people...',
+#                 'data-minimum-input-length': 0,
+#             }
+#         ),
+#         required=False,
+#         label="Reported by"
+#     )
+    
+#     class Meta:
+#         model = BugReport
+#         fields = ['bug_type', 'title', 'description', 'assigned_to', 'reported_by']
+
+#     def save(self, commit=True):
+#         instance = super().save(commit=False)
+#         instance.content_type = ContentType.objects.get_for_model(self._parent_obj.__class__)
+#         instance.object_id = self._parent_obj.pk
+
+#         if commit:
+#             instance.save()
+#         return instance
