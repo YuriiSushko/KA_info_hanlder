@@ -3,7 +3,7 @@ from data_tracker.courses.models import Course, Status, Item, ActionLog, Video, 
 from data_tracker.users.models import Mortals, Roles
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from data_tracker.courses.forms import BugReportAdminForm, BugReportInlineForm
+from data_tracker.courses.forms import BugReportAdminForm
 from django.urls import reverse
 from django.contrib.contenttypes.admin import GenericTabularInline
 from data_tracker.courses.filters import *
