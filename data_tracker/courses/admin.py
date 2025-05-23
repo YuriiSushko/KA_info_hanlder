@@ -11,9 +11,13 @@ from data_tracker.courses.filters import *
 # class BugReportInline(GenericTabularInline):
 #     model = BugReport
 #     form = BugReportInlineForm
-#     extra = 0
 #     ct_field = "content_type"
 #     ct_fk_field = "object_id"
+#     extra = 0
+    
+#     def save_model(self, request, obj, form, change):
+#         obj.added_by = request.user
+#         super().save_model(request, obj, form, change)
 
 #     def get_formset(self, request, obj=None, **kwargs):
 #         formset = super().get_formset(request, obj, **kwargs)
@@ -25,6 +29,7 @@ from data_tracker.courses.filters import *
 #                 return form
 
 #         return PrefilledFormSet
+
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
@@ -84,7 +89,7 @@ class ActionLogAdmin(admin.ModelAdmin):
     list_display = ('action', 'type', 'get_object_link', 'who', 'get_local_time', 'new_status', 'comment')
     list_display_links = None
     date_hierarchy = 'date'
-    search_fields = ['title', 'type', 'comment']
+    search_fields = ['item__title', 'video__title']
     list_filter = ('action', 'type', 'new_status', WhoPerformedFilter)
 
     def get_object_link(self, obj):
