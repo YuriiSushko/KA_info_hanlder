@@ -136,6 +136,7 @@ class VideoAdmin(admin.ModelAdmin):
     list_filter = (VideoStatusFilter, YoutubeStatusFilter, PlatformStatusFilter, 'translation_issue', VideoAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
+    inlines = [BugReportInline]
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
