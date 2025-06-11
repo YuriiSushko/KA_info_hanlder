@@ -8,9 +8,23 @@
 │   │   ├── __init__.py
 │   │   ├── migrations
 │   │   │   ├── 0001_initial.py
+│   │   │   ├── 0002_auto_20250320_1337.py
+│   │   │   ├── 0003_auto_20250320_1437.py
+│   │   │   ├── 0004_auto_20250320_1455.py
+│   │   │   ├── 0005_auto_20250320_1657.py
+│   │   │   ├── 0006_auto_20250320_1702.py
 │   │   │   ├── __init__.py
 │   │   │   └── __pycache__
 │   │   │       ├── 0001_initial.cpython-310.pyc
+│   │   │       ├── 0002_auto_20250320_1037.cpython-310.pyc
+│   │   │       ├── 0002_auto_20250320_1051.cpython-310.pyc
+│   │   │       ├── 0002_auto_20250320_1054.cpython-310.pyc
+│   │   │       ├── 0002_auto_20250320_1337.cpython-310.pyc
+│   │   │       ├── 0003_auto_20250320_1437.cpython-310.pyc
+│   │   │       ├── 0004_auto_20250320_1455.cpython-310.pyc
+│   │   │       ├── 0005_auto_20250320_1657.cpython-310.pyc
+│   │   │       ├── 0006_auto_20250320_1702.cpython-310.pyc
+│   │   │       ├── 0007_auto_20250320_1703.cpython-310.pyc
 │   │   │       └── __init__.cpython-310.pyc
 │   │   ├── models.py
 │   │   ├── __pycache__
@@ -22,26 +36,14 @@
 │   │   │   ├── urls.cpython-310.pyc
 │   │   │   └── views.cpython-310.pyc
 │   │   ├── signals.py
-│   │   ├── templates
-│   │   │   └── courses
-│   │   │       ├── action_log_list.html
-│   │   │       ├── base.html
-│   │   │       ├── create_course.html
-│   │   │       ├── delete_course.html
-│   │   │       ├── people_list.html
-│   │   │       ├── role_list.html
-│   │   │       ├── update_course.html
-│   │   │       └── update_item.html
 │   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
 │   ├── __init__.py
-│   ├── mortals
-│   │   ├── __init__.py
-│   │   ├── models.py
-│   │   └── __pycache__
-│   │       ├── __init__.cpython-310.pyc
-│   │       └── models.cpython-310.pyc
+│   ├── management
+│   │   └── commands
+│   │       ├── import_items.py
+│   │       └── __init__.py
 │   ├── __pycache__
 │   │   ├── asgi.cpython-310.pyc
 │   │   ├── __init__.cpython-310.pyc
@@ -63,10 +65,24 @@
 │   │       └── production.cpython-310.pyc
 │   ├── settings.py
 │   ├── urls.py
+│   ├── users
+│   │   ├── admin.py
+│   │   ├── __init__.py
+│   │   ├── migrations
+│   │   │   ├── 0001_initial.py
+│   │   │   ├── __init__.py
+│   │   │   └── __pycache__
+│   │   │       ├── 0001_initial.cpython-310.pyc
+│   │   │       └── __init__.cpython-310.pyc
+│   │   ├── models.py
+│   │   └── __pycache__
+│   │       ├── admin.cpython-310.pyc
+│   │       ├── __init__.cpython-310.pyc
+│   │       └── models.cpython-310.pyc
 │   └── wsgi.py
 ├── manage.py
 ├── project_structure.txt
 ├── requirements.txt
 └── runtime.txt
 
-13 directories, 57 files
+15 directories, 71 files

@@ -3,6 +3,7 @@
 import os
 import sys
 import environ
+from django.db import connection
 
 def main():
     """Run administrative tasks."""
@@ -11,6 +12,7 @@ def main():
     environ.Env.read_env(os.path.join(os.path.dirname(__file__), '.env'))
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', env('DJANGO_SETTINGS_MODULE'))
+    print("Using DB:", connection.settings_dict['NAME'])
     
     try:
         from django.core.management import execute_from_command_line
@@ -21,11 +23,11 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
         
-    if len(sys.argv) > 1 and sys.argv[1] == 'makemigrations' or sys.argv[1] == 'migrate' or  sys.argv[1] == 'createsuperuser':
-        execute_from_command_line(sys.argv)
-    else:
+    if len(sys.argv) > 1 and sys.argv[1] in ['runserver']:
         port = os.environ.get('PORT', '8000')  # Use '8000' as default if PORT is not set
         execute_from_command_line(['manage.py', 'runserver', f'0.0.0.0:{port}'])
+    else:
+        execute_from_command_line(sys.argv)
         
 
 if __name__ == '__main__':

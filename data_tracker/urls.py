@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from data_tracker.admin_site import custom_admin_site
+from data_tracker.crm.autocomplete import LotsOfParticipantsAutocomplete
+from data_tracker.courses.autocomplete import ContentObjectAutocomplete, PeopleAutocomplete, MortalsAutocomplete
 
 # Add a view for the root URL
 def home(request):
@@ -26,9 +29,30 @@ def home(request):
 def favicon(request):
     return HttpResponse(status=204)  # Return empty response for favicon
 
-urlpatterns = [
+urlpatterns = [    
     path('favicon.ico', favicon),  # Handle favicon.ico requests
-    path('', home),  # Root URL points to the custom home view
-    path('admin/', admin.site.urls),  # Admin URL remains the same
+    path('', home),  # Root URL points to the custom home view'
+    # path('admin/', admin.site.urls),
+    path('admin/', custom_admin_site.urls),  # Admin URL remains the same
+    
+    path(
+        'participant-autocomplete/',
+        LotsOfParticipantsAutocomplete.as_view(),
+        name='participant-autocomplete'
+    ),
+    path(
+        'content-object-autocomplete/',
+        ContentObjectAutocomplete.as_view(),
+        name='content-object-autocomplete'
+    ),
+    
+    path('people-autocomplete/', 
+        PeopleAutocomplete.as_view(),
+        name='people-autocomplete'
+    ),
+    
+    path('mortals-autocomplete/', 
+        MortalsAutocomplete.as_view(),
+        name='mortals-autocomplete'
+    ),
 ]
-

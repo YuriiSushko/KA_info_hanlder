@@ -42,6 +42,7 @@ class MortalsManager(BaseUserManager):
 
 
 class Mortals(AbstractBaseUser, PermissionsMixin):
+    last_seen = models.DateTimeField(blank=True, null=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -69,4 +70,4 @@ class Roles(Group):
         verbose_name_plural = "Roles"
 
     def __str__(self):
-        return self.name
+        return self.title

@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'data_tracker.courses.apps.CoursesConfig',
+    'dal',
+    'dal_select2',
+    'dal_queryset_sequence',
+    'dal_select2_queryset_sequence',
+    'data_tracker.crm',
+    'data_tracker',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'data_tracker.middleware.UpdateLastSeenMiddleware',
 ]
 
 ROOT_URLCONF = 'data_tracker.urls'
@@ -55,8 +62,8 @@ ROOT_URLCONF = 'data_tracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Django will look here for template files.
+        'APP_DIRS': True,  # Also look in each installed app's templates/ subdirectory.
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
