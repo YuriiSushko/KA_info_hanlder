@@ -28,7 +28,8 @@ class PhoneNumberInline(GenericTabularInline):
     
 class InstitutionAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone_number_filter', 'email', 'person_list', 'role', 'get_class_orgs', 'add_info')
-    list_filter = ('role', 'org_class') 
+    list_filter = ('role', 'org_class')
+    filter_horizontal = ["org_class", "people"]
     search_fields = ['name', 'email']
     inlines = [ContactInfoInlineAdmin, PhoneNumberInline]
     

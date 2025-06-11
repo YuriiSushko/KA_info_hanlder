@@ -34,9 +34,25 @@ class BugReportInline(GenericTabularInline):
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
     list_filter = ('type', ItemStatusFilter, ItemAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    autocomplete_fields = ["translator"]
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
     inlines = [BugReportInline]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["title", "status", "link", "external_link", "auditor", "translator",],
+            },
+        ),
+        (
+            "More info",
+            {
+                "classes": ["collapse"],
+                "fields": ["comments", "courses", "number_of_words", "updated_by", "last_modified"],
+            },
+        ),
+    ]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -137,6 +153,34 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
     inlines = [BugReportInline]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["title", "auditor", "actor"],
+            },
+        ),
+        (
+            "Links",
+            {
+                "classes": ["collapse", "wide"],
+                "fields": ["portal_link", "localized_link", "yt_link", "translated_yt_link", "preview_link"],
+            },
+        ),
+        (   
+            "Statuses",
+            {
+                "fields": ["video_status", "platform_status", "youtube_status", "translation_issue"],
+            },
+        ),
+        (
+            "More info",
+            {
+                "classes": ["collapse"],
+                "fields": ["comments", "courses", "duration", "updated_by", "last_modified"],
+            },
+        ),
+    ]
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
