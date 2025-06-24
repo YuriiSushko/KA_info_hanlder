@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'dal_queryset_sequence',
     'dal_select2_queryset_sequence',
     'data_tracker.crm',
+    'data_tracker.stats',
     'data_tracker',
 ]
 
