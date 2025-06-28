@@ -3,40 +3,56 @@ from data_tracker.courses.models import Course, Status, Item, ActionLog, Video, 
 from data_tracker.users.models import Mortals, Roles
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from data_tracker.courses.forms import BugReportAdminForm
+from data_tracker.courses.forms import BugReportAdminForm, BugReportInlineForm
 from django.urls import reverse
 from django.contrib.contenttypes.admin import GenericTabularInline
 from data_tracker.courses.filters import *
 
-# class BugReportInline(GenericTabularInline):
-#     model = BugReport
-#     form = BugReportInlineForm
-#     ct_field = "content_type"
-#     ct_fk_field = "object_id"
-#     extra = 0
+class BugReportInline(GenericTabularInline):
+    model = BugReport
+    form = BugReportInlineForm
+    ct_field = "content_type"
+    ct_fk_field = "object_id"
+    extra = 0
     
-#     def save_model(self, request, obj, form, change):
-#         obj.added_by = request.user
-#         super().save_model(request, obj, form, change)
+    def save_model(self, request, obj, form, change):
+        obj.added_by = request.user
+        super().save_model(request, obj, form, change)
 
-#     def get_formset(self, request, obj=None, **kwargs):
-#         formset = super().get_formset(request, obj, **kwargs)
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
 
-#         class PrefilledFormSet(formset):
-#             def _construct_form(self, i, **kwargs):
-#                 form = super()._construct_form(i, **kwargs)
-#                 form._parent_obj = obj
-#                 return form
+        class PrefilledFormSet(formset):
+            def _construct_form(self, i, **kwargs):
+                form = super()._construct_form(i, **kwargs)
+                form._parent_obj = obj
+                return form
 
-#         return PrefilledFormSet
+        return PrefilledFormSet
 
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'get_courses', 'status', 'get_link', 'get_link_ka', 'last_modified')
     list_filter = ('type', ItemStatusFilter, ItemAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
+    autocomplete_fields = ["translator"]
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','title', 'type', 'courses','number_of_words')
-    # inlines = [BugReportInline]
+    inlines = [BugReportInline]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["title", "status", "link", "external_link", "auditor", "translator",],
+            },
+        ),
+        (
+            "More info",
+            {
+                "classes": ["collapse"],
+                "fields": ["comments", "courses", "number_of_words", "updated_by", "last_modified"],
+            },
+        ),
+    ]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -136,6 +152,35 @@ class VideoAdmin(admin.ModelAdmin):
     list_filter = (VideoStatusFilter, YoutubeStatusFilter, PlatformStatusFilter, 'translation_issue', VideoAuditorFilter, UaMathCourseFilter, KaMathCourseFilter, UaScienceCourseFilter, KaScienceCourseFilter)
     search_fields = ['title']
     readonly_fields = ('last_modified','updated_by','type','courses','title','duration')
+    inlines = [BugReportInline]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["title", "auditor", "actor"],
+            },
+        ),
+        (
+            "Links",
+            {
+                "classes": ["collapse", "wide"],
+                "fields": ["portal_link", "localized_link", "yt_link", "translated_yt_link", "preview_link"],
+            },
+        ),
+        (   
+            "Statuses",
+            {
+                "fields": ["video_status", "platform_status", "youtube_status", "translation_issue"],
+            },
+        ),
+        (
+            "More info",
+            {
+                "classes": ["collapse"],
+                "fields": ["comments", "courses", "duration", "updated_by", "last_modified"],
+            },
+        ),
+    ]
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)

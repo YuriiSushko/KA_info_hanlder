@@ -103,11 +103,6 @@ class BugReportAdminForm(forms.ModelForm):
         if content_object:
             instance.content_type = ContentType.objects.get_for_model(content_object.__class__)
             instance.object_id = content_object.pk
-            
-        reported_by = self.cleaned_data.get('reported_by')
-        if reported_by:
-            instance.reported_by_content_type = ContentType.objects.get_for_model(reported_by.__class__)
-            instance.reported_by_object_id = reported_by.pk
 
         if commit:
             instance.save()
@@ -138,45 +133,51 @@ class BugReportAdminForm(forms.ModelForm):
         cleaned_data['content_object'] = content_object
         return cleaned_data
     
-# class BugReportInlineForm(forms.ModelForm):
-#     assigned_to = forms.ModelChoiceField(
-#         queryset=Mortals.objects.all(),
-#         widget=autocomplete.ModelSelect2(
-#             url='mortals-autocomplete',
-#             attrs={
-#                 'data-placeholder': 'Search users...',
-#                 'data-minimum-input-length': 0,
-#             }
-#         ),
-#         required=False,
-#         label="Assign to"
-#     )
+class BugReportInlineForm(forms.ModelForm):
+    assigned_to = forms.ModelChoiceField(
+        queryset=Mortals.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='mortals-autocomplete',
+            attrs={
+                'data-placeholder': 'Search users...',
+                'data-minimum-input-length': 0,
+            }
+        ),
+        required=False,
+        label="Assign to"
+    )
     
-#     reported_by = autocomplete.Select2GenericForeignKeyModelField(
-#         model_choice=[
-#             (Mortals, 'first_name'),
-#             (User, 'name'),
-#         ],
-#         widget=QuerySetSequenceSelect2(
-#             url='people-autocomplete',
-#             attrs={
-#                 'data-placeholder': 'Search people...',
-#                 'data-minimum-input-length': 0,
-#             }
-#         ),
-#         required=False,
-#         label="Reported by"
-#     )
+    reported_by = autocomplete.Select2GenericForeignKeyModelField(
+        model_choice=[
+            (Mortals, 'first_name'),
+            (User, 'name'),
+        ],
+        widget=QuerySetSequenceSelect2(
+            url='people-autocomplete',
+            attrs={
+                'data-placeholder': 'Search people...',
+                'data-minimum-input-length': 0,
+            }
+        ),
+        required=False,
+        label="Reported by"
+    )
     
-#     class Meta:
-#         model = BugReport
-#         fields = ['bug_type', 'title', 'description', 'assigned_to', 'reported_by']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if self.instance and self.instance.pk:
+            self.fields['reported_by'].initial = self.instance.reported_by
+            
+    class Meta:
+        model = BugReport
+        fields = ['bug_type', 'title', 'description', 'assigned_to', 'reported_by']
 
-#     def save(self, commit=True):
-#         instance = super().save(commit=False)
-#         instance.content_type = ContentType.objects.get_for_model(self._parent_obj.__class__)
-#         instance.object_id = self._parent_obj.pk
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.content_type = ContentType.objects.get_for_model(self._parent_obj.__class__)
+        instance.object_id = self._parent_obj.pk
 
-#         if commit:
-#             instance.save()
-#         return instance
+        if commit:
+            instance.save()
+        return instance
