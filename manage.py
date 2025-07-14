@@ -12,7 +12,7 @@ def main():
     environ.Env.read_env(os.path.join(os.path.dirname(__file__), '.env'))
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', env('DJANGO_SETTINGS_MODULE'))
-    print("Using DB:", connection.settings_dict['NAME'])
+    print("Using DB:", connection.settings_dict['NAME'], "on host:port: ", connection.settings_dict['HOST'] + ":"+ connection.settings_dict['PORT'])
     
     try:
         from django.core.management import execute_from_command_line

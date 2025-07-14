@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.timezone import now
+from django.utils import timezone
 from data_tracker.courses.models import Item, ActionLog, Video
 from data_tracker.users.models import Mortals
 
@@ -21,7 +21,7 @@ def log_item_action(sender, instance, created, **kwargs):
         item=instance,  # The ID of the updated item
         who=updated_by_user,  # The user who performed the update
         new_status=instance.status,  # The new status of the item
-        date=now(),  # Timestamp of the update
+        date=timezone.now(),  # Timestamp of the update
         comment=instance.comments  # A custom comment describing the update
     )
 
@@ -42,6 +42,6 @@ def log_video_action(sender, instance, created, **kwargs):
         video=instance,  # The ID of the updated item
         who=updated_by_user,  # The user who performed the update
         new_status=instance.video_status,  # The new status of the item
-        date=now(),  # Timestamp of the update
+        date=timezone.now(),  # Timestamp of the update
         comment=instance.comments  # A custom comment describing the update
     )
