@@ -3,12 +3,12 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.contrib import admin
 from data_tracker.stats.models import ChartViewEntry
-from data_tracker.stats.charts.registrations import RegistrationChart
+from data_tracker.stats.charts.people import PeopleChart
 from data_tracker.stats.charts.courses import CourseChart, GeneralProgressByCourse
 from data_tracker.admin_site import custom_admin_site
 
 class ChartAdmin(admin.ModelAdmin):
-    chart_view_classes = [CourseChart, GeneralProgressByCourse]
+    chart_view_classes = [CourseChart, GeneralProgressByCourse, PeopleChart]
     
     def get_urls(self):
         urls = super().get_urls()
