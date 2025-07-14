@@ -7,6 +7,7 @@ from data_tracker.courses.forms import BugReportAdminForm, BugReportInlineForm
 from django.urls import reverse
 from django.contrib.contenttypes.admin import GenericTabularInline
 from data_tracker.courses.filters import *
+from django.utils import timezone
 
 class BugReportInline(GenericTabularInline):
     model = BugReport
@@ -121,8 +122,8 @@ class ActionLogAdmin(admin.ModelAdmin):
     get_object_link.short_description = 'Object'
 
     def get_local_time(self, obj):
-        return obj.date.strftime('%Y-%m-%d %H:%M:%S')
-    get_local_time.short_description = 'Last modified'
+        local_dt = timezone.localtime(obj.date)
+        return local_dt.strftime('%Y-%m-%d %H:%M:%S')
 
     def has_add_permission(self, request, obj=None):
         return False

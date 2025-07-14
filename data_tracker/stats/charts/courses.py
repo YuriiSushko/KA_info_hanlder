@@ -68,10 +68,6 @@ class CourseChart(ChartViewBase):
                 "data": [0] * (len(status_titles) - 1) + [translation_issue_count]
             })
             
-        total_exercise = sum(exercise_values)
-        total_article = sum(article_values)
-        total_video = sum(video_values)
-
         extra = {
                     "totals": {
                         "Exercise": sum(exercise_values),
