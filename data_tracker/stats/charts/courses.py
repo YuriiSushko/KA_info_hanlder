@@ -91,25 +91,29 @@ class GeneralProgressByCourse(ChartViewBase):
         qs_articles = Item.objects.filter(courses=selected_course, type="article")
         qs_videos = Video.objects.filter(courses=selected_course)
 
-        labels = ["Total", "Processed", "Not processed"]
+        labels = ["Total", "Validated", "Processed", "Not processed"]
 
-        exercise_data = [
-            qs_exercises.count(),
-            qs_exercises.exclude(status__isnull=True).count(),
-            qs_exercises.filter(status__isnull=True).count(),
-        ]
-        
-        article_data = [
-            qs_articles.count(),
-            qs_articles.exclude(status__isnull=True).count(),
-            qs_articles.filter(status__isnull=True).count(),
-        ]
+        # Exercises
+        total_ex = qs_exercises.count()
+        validated_ex = qs_exercises.filter(status__title="Validated").count()
+        processed_ex = qs_exercises.exclude(status__title__in=["Translated", None]).count()
+        not_processed_ex = qs_exercises.filter(status__title__in=["Translated", None]).count()
 
-        video_data = [
-            qs_videos.count(),
-            qs_videos.exclude(video_status__isnull=True).count(),
-            qs_videos.filter(video_status__isnull=True).count(),
-        ]
+        # Articles
+        total_ar = qs_articles.count()
+        validated_ar = qs_articles.filter(status__title="Validated").count()
+        processed_ar = qs_articles.exclude(status__title__in=["Translated", None]).count()
+        not_processed_ar = qs_articles.filter(status__title__in=["Translated", None]).count()
+
+        # Videos
+        total_vid = qs_videos.count()
+        validated_vid = qs_videos.filter(video_status__title="Validated").count()
+        processed_vid = qs_videos.exclude(video_status__title__in=["Recorded", None]).count()
+        not_processed_vid = qs_videos.filter(video_status__title__in=["Recorded", None]).count()
+
+        exercise_data = [total_ex, validated_ex, processed_ex, not_processed_ex]
+        article_data = [total_ar, validated_ar, processed_ar, not_processed_ar]
+        video_data = [total_vid, validated_vid, processed_vid, not_processed_vid]
 
         datasets = [
             {"label": "Exercises", "data": exercise_data},
