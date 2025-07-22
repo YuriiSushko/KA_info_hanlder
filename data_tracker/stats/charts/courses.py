@@ -181,7 +181,7 @@ class GeneralProgressByCourse(ChartViewBase):
         exercise_data = [total_ex, validated_ex, processed_ex, not_processed_ex]
         article_data = [total_ar, validated_ar, processed_ar, not_processed_ar]
         video_data = [total_vid, validated_vid, processed_vid, not_processed_vid]
-        
+
         datasets = [
             {"label": "Exercises", "data": exercise_data},
             {"label": "Articles", "data": article_data},
