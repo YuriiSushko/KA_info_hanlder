@@ -7,13 +7,14 @@
     position: relative;
     width: 100%;
     max-width: 100%;
-    height: 300px;
-    overflow: hidden;
+    height: 50vh; /* relative to viewport height */
+    overflow-x: auto;
+    padding-bottom: 2em;
   }
 
   .chart-canvas {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     display: block;
   }
 </style>
@@ -21,6 +22,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
 <div class="accordion" id="chartsAccordion">
   {% for chart in charts %}
@@ -53,33 +55,36 @@
     afterDraw(chart, args, options) {
       const totals = options && options.totals;
       if (!totals) return;
-  
-      const { ctx, chartArea: { right, top } } = chart;
+
+      const { ctx, chartArea: { right, left, top, bottom }, width } = chart;
       ctx.save();
-      ctx.font = '12px Arial';
+      ctx.font = '0.75rem Arial';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'top';
   
-      const padding = 6;
-      const lineHeight = 16;
+      const padding = 8;
+      const lineHeight = 18;
       const lines = ['TOTALS'];
       for (const [key, value] of Object.entries(totals)) {
         lines.push(`${key}: ${value}`);
       }
   
-      const boxWidth = 140;
+      const boxWidth = Math.min(140, width * 0.35);
       const boxHeight = lineHeight * lines.length + padding * 2;
-      const x = right - 10;
-      const y = top + 10;
   
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      let x = right;
+      let y = top;
+  
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.fillRect(x - boxWidth, y, boxWidth, boxHeight);
       ctx.strokeStyle = 'black';
       ctx.strokeRect(x - boxWidth, y, boxWidth, boxHeight);
       ctx.fillStyle = 'black';
+  
       lines.forEach((line, i) => {
         ctx.fillText(line, x - padding, y + padding + i * lineHeight);
       });
+  
       ctx.restore();
     }
   };
@@ -90,25 +95,53 @@
     {% else %}
       const totals{{ forloop.counter }} = null;
     {% endif %}
+    
+    const data{{ forloop.counter }} = {
+      labels: {{ chart.chart_labels|safe }},
+      datasets: {{ chart.chart_values|safe }}
+    };
+
+    // Flatten all data points to find the max
+    const allValues{{ forloop.counter }} = data{{ forloop.counter }}.datasets.flatMap(ds => ds.data);
+    const actualMax{{ forloop.counter }} = Math.max(...allValues{{ forloop.counter }});
+    const limitedMax{{ forloop.counter }} = Math.ceil(actualMax{{ forloop.counter }} * 1.1);
+
     const ctx{{ forloop.counter }} = document.getElementById('chart{{ forloop.counter }}').getContext('2d');
     const chart{{ forloop.counter }} = new Chart(ctx{{ forloop.counter }}, {
       type: 'bar',
-      data: {
-        labels: {{ chart.chart_labels|safe }},
-        datasets: {{ chart.chart_values|safe }}
-      },
+      data: data{{ forloop.counter }},
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } },
+        scales: {
+          x: {
+            stacked: false,
+            ticks: {
+              autoSkip: false,
+              maxRotation: 0,
+              minRotation: 0
+            }
+          },
+          y: {
+            stacked: false,
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
+        },
         plugins: {
+          datalabels: {
+            display: true,
+            anchor: 'end',
+            align: 'end',
+            formatter: value => value ?? ''
+          },
           totalsBoxPlugin: {
             totals: totals{{ forloop.counter }}
           }
         }
       },
-      plugins: [totalsBoxPlugin]
-    });    
+      plugins: [totalsBoxPlugin, ChartDataLabels]
+    });
   {% endfor %}
 
   // Handle accordion expand to fix chart rendering
